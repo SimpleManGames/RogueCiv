@@ -18,6 +18,9 @@ public class HexMesh : MonoBehaviour
         colors = new List<Color>();
     }
 
+    /// <summary>
+    /// Main function for generating the mesh
+    /// </summary>
     public void Triangulate(HexObject[] cells)
     {
         hexMesh.Clear();
@@ -33,6 +36,9 @@ public class HexMesh : MonoBehaviour
         hexMesh.colors = colors.ToArray();
         hexMesh.RecalculateNormals();
     }
+    /// <summary>
+    /// Breaks down the main triangulate function into smaller more managable bits
+    /// </summary>
     private void Triangulate(HexObject cell)
     {
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
@@ -188,7 +194,6 @@ public class HexMesh : MonoBehaviour
             AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
         }
     }
-    // left
     private void TriangulateCornerCliffTerraces(Vector3 begin, HexObject beginCell, Vector3 left, HexObject leftCell, Vector3 right, HexObject rightCell)
     {
         float b = 1f / (leftCell.Elevation - beginCell.Elevation);
