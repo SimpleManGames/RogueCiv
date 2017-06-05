@@ -7,13 +7,13 @@ public enum HexEdgeType
 
 public static class HexMetrics
 {
-    public const float outerRadius = 1f;
+    public const float outerRadius = 10f;
     public const float innerRadius = outerRadius * 0.866025404f;
 
-    public const float solidFactor = 0.75f;
+    public const float solidFactor = 0.8f;
     public const float blendFactor = 1f - solidFactor;
 
-    public const float elevationStep = .5f;
+    public const float elevationStep = .5f * outerRadius;
 
     public const int terracesPerSlope = 2;
     public const int terraceSteps = terracesPerSlope * 2 + 1;
@@ -22,7 +22,7 @@ public static class HexMetrics
 
     public static Texture2D noiseSource;
 
-    public const float cellPerturbStrength = 5f;
+    public const float cellPerturbStrength = 2f;
     public const float noiseScale = .003f;
     public const float elevationPerturbStrength = 0.5f;
 
@@ -61,16 +61,16 @@ public static class HexMetrics
 
     public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)
     {
-        float h = step * HexMetrics.horizontalTerraceStepSize;
+        float h = step * horizontalTerraceStepSize;
         a.x += (b.x - a.x) * h;
         a.z += (b.z - a.z) * h;
-        float v = ((step + 1) / 2) * HexMetrics.verticalTerraceStepSize;
+        float v = ((step + 1) / 2) * verticalTerraceStepSize;
         a.y += (b.y - a.y) * v;
         return a;
     }
     public static Color TerraceLerp(Color a, Color b, int step)
     {
-        float h = step * HexMetrics.horizontalTerraceStepSize;
+        float h = step * horizontalTerraceStepSize;
         return Color.Lerp(a, b, h);
     }
 
