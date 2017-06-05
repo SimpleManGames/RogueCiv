@@ -39,7 +39,7 @@ public class HexObject : MonoBehaviour
         {
             elevation = value;
             Vector3 position = transform.localPosition;
-            position.y = value * HexMatrics.elevationStep;
+            position.y = value * HexMetrics.elevationStep;
             transform.localPosition = position;
         }
     }

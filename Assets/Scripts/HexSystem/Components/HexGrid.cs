@@ -128,7 +128,7 @@ public class HexGrid : Singleton<HexGrid>
 
     private void CreateCell(int x, int z, int i)
     {
-        Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMatrics.innerRadius * 2f), 0f, -(z * (HexMatrics.outerRadius * 1.5f)));
+        Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMetrics.innerRadius * 2f), 0f, -(z * (HexMetrics.outerRadius * 1.5f)));
         HexObject hexObject = Hexes.Add<HexObject>(Instantiate(hexPrefab));
         hexObject.Index = i;
         hexObject.Hex = new Hex(CubeCoord.OddRowToCube(new OffsetCoord(x, z)));
