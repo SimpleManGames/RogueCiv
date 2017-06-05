@@ -1,5 +1,10 @@
 ﻿using UnityEngine;
 
+public enum HexEdgeType
+{
+    Flat, Slope, Cliff
+}
+
 public static class HexMetrics
 {
     public const float outerRadius = 1f;
@@ -57,10 +62,21 @@ public static class HexMetrics
         a.y += (b.y - a.y) * v;
         return a;
     }
-
     public static Color TerraceLerp(Color a, Color b, int step)
     {
         float h = step * HexMetrics.horizontalTerraceStepSize;
         return Color.Lerp(a, b, h);
+    }
+
+    public static HexEdgeType GetEdgeType(int e1, int e2)
+    {
+        if (e1 == e2)
+            return HexEdgeType.Flat;
+
+        int delta = e2 - e1;
+        if (delta <= 1 || delta >= -1)
+            return HexEdgeType.Slope;
+
+        return HexEdgeType.Cliff;
     }
 }

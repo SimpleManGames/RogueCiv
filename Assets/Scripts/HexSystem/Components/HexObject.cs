@@ -43,4 +43,9 @@ public class HexObject : MonoBehaviour
             transform.localPosition = position;
         }
     }
+
+    public HexEdgeType GetEdgeType(HexDirection direction)
+    {
+        return HexMetrics.GetEdgeType((int)elevation, (int)HexGrid.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
+    }
 }
