@@ -48,4 +48,9 @@ public class HexObject : MonoBehaviour
     {
         return HexMetrics.GetEdgeType((int)elevation, (int)HexGrid.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
     }
+
+    public HexEdgeType GetEdgeType(HexObject other)
+    {
+        return HexMetrics.GetEdgeType((int)Elevation, (int)other.Elevation);
+    }
 }
