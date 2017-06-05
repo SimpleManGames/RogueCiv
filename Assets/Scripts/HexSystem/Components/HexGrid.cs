@@ -41,6 +41,8 @@ public class HexGrid : Singleton<HexGrid>
         }
     }
 
+    public Texture2D noiseSource;
+
     #endregion
 
     #region Statics
@@ -142,6 +144,8 @@ public class HexGrid : Singleton<HexGrid>
     new public void Awake()
     {
         base.Awake();
+
+        HexMetrics.noiseSource = noiseSource;
 
         Hexes = new HashSet<HexObject>();
 
