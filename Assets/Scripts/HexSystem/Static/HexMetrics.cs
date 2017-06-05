@@ -24,6 +24,7 @@ public static class HexMetrics
 
     public const float cellPerturbStrength = 2f;
     public const float noiseScale = .003f;
+    public const float elevationPerturbStrength = 1.5f;
 
     private static Vector3[] corners = {
         new Vector3(0f, 0f, outerRadius),

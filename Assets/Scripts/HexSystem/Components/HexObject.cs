@@ -40,7 +40,16 @@ public class HexObject : MonoBehaviour
             elevation = value;
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.elevationStep;
+            position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.elevationPerturbStrength;
             transform.localPosition = position;
+        }
+    }
+
+    public Vector3 Position
+    {
+        get
+        {
+            return transform.localPosition;
         }
     }
 
