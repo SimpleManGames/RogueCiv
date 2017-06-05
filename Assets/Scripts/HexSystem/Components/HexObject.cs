@@ -55,7 +55,7 @@ public class HexObject : MonoBehaviour
 
     public HexEdgeType GetEdgeType(HexDirection direction)
     {
-        return HexMetrics.GetEdgeType((int)elevation, (int)HexGrid.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
+        return HexMetrics.GetEdgeType((int)elevation, (int)HexGrid.Instance.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
     }
 
     public HexEdgeType GetEdgeType(HexObject other)

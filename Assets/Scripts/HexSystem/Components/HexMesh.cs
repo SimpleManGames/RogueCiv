@@ -56,7 +56,7 @@ public class HexMesh : MonoBehaviour
     }
     private void TriangulateConnection(HexDirection direction, HexObject cell, EdgeVertices e1)
     {
-        HexObject neighbour = HexGrid.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction).cubeCoords);
+        HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction).cubeCoords);
 
         if (neighbour == null)
             return;
@@ -75,7 +75,7 @@ public class HexMesh : MonoBehaviour
             TriangulateEdgeStrip(e1, cell.Color, e2, neighbour.Color);
         }
 
-        HexObject next = HexGrid.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction.Next()).cubeCoords);
+        HexObject next = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction.Next()).cubeCoords);
         if (direction <= HexDirection.E && next != null)
         {
             Vector3 v5 = e1.v4 + HexMetrics.GetBridge(direction.Next());
