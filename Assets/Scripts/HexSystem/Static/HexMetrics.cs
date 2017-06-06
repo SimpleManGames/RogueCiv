@@ -68,6 +68,9 @@ public static class HexMetrics
     /// </summary>
     public const float elevationPerturbStrength = 1.2f;
 
+    public const int chunkSizeX = 5;
+    public const int chunkSizeZ = 5;
+
     /// <summary>
     /// Pre-defined corners of the hexes
     /// </summary>

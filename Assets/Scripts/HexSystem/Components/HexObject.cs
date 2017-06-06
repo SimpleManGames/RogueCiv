@@ -27,21 +27,29 @@ public class HexObject : MonoBehaviour
         }
         set
         {
+            if (color == value)
+                return;
+
             color = value;
+            Refresh();
         }
     }
 
-    private float elevation;
+    private float elevation = float.MinValue;
     public float Elevation
     {
         get { return elevation; }
         set
         {
+            if (elevation == value)
+                return;
+
             elevation = value;
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.elevationStep;
             position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.elevationPerturbStrength;
             transform.localPosition = position;
+            Refresh();
         }
     }
 
@@ -50,6 +58,25 @@ public class HexObject : MonoBehaviour
         get
         {
             return transform.localPosition;
+        }
+    }
+
+    public HexGridChunk chunk;
+
+    private void Refresh()
+    {
+        if (chunk)
+        {
+            chunk.Refresh();
+            HexObject[] neighbors = HexGrid.Instance.FindHexObjects(Hex.Neighbours(Hex));
+            for (int i = 0; i < neighbors.Length; i++)
+            {
+                HexObject neighbor = neighbors[i];
+                if (neighbor != null && neighbor.chunk != chunk)
+                {
+                    neighbor.chunk.Refresh();
+                }
+            }
         }
     }
 

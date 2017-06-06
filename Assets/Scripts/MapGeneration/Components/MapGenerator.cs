@@ -7,8 +7,22 @@ public sealed class MapGenerator : Singleton<MapGenerator>
     public enum DrawMode { Noise, Color, FallOff };
     public DrawMode drawMode;
 
-    public int mapWidth;
-    public int mapHeight;
+    [HideInInspector]
+    public int mapWidth
+    {
+        get
+        {
+            return GlobalMapSettings.Instance.Width;
+        }
+    }
+    [HideInInspector]
+    public int mapHeight
+    {
+        get
+        {
+            return GlobalMapSettings.Instance.Height;
+        }
+    }
 
     public bool autoUpdate;
 

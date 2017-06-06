@@ -36,6 +36,15 @@ public static class HexGridExtension
         return Instance.Hexes.Where(t => t.Hex.cubeCoords.Q == q && t.Hex.cubeCoords.R == r && t.Hex.cubeCoords.S == s).FirstOrDefault();
     }
 
+    public static HexObject[] FindHexObjects(this HexGrid Instance, Hex[] hexes)
+    {
+        HexObject[] retVal = new HexObject[hexes.Length];
+        for (int i = 0; i < retVal.Length; i++)
+            retVal[i] = Instance.FindHexObject(hexes[i].cubeCoords);
+
+        return retVal;
+    }
+
     /// <summary>
     /// Gets all the Hexes in a range around the center
     /// </summary>
