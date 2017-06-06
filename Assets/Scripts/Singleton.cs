@@ -11,7 +11,17 @@
 public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
-    public static T Instance { get { return _instance as T; } }
+    public static T Instance
+    {
+        get
+        {
+            if (!Application.isPlaying)
+                if (_instance == null)
+                    _instance = FindObjectOfType<T>();
+
+            return _instance as T;
+        }
+    }
 
     public bool dontDestroyOnLoad;
 
