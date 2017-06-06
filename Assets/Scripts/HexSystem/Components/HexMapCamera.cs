@@ -4,7 +4,7 @@ public class HexMapCamera : MonoBehaviour
 {
     Transform swivel, stick;
 
-    float zoom = 1f;
+    float zoom = 0f;
 
     [SerializeField]
     private float stickMinZoom;
@@ -21,10 +21,27 @@ public class HexMapCamera : MonoBehaviour
     [SerializeField]
     private float moveSpeedMaxZoom;
 
+    [SerializeField]
+    private HexGrid grid;
+
+    private Vector3 Size
+    {
+        get
+        {
+            return new Vector3((grid.ChunkCountX * HexMetrics.chunkSizeX - 0.5f) * (2f * HexMetrics.innerRadius), 0f, -(grid.ChunkCountZ * HexMetrics.chunkSizeZ - 1) * (1.5f * HexMetrics.outerRadius));
+        }
+    }
+
     public void Awake()
     {
         swivel = transform.GetChild(0);
         stick = swivel.GetChild(0);
+    }
+
+    public void Start()
+    {
+        AdjustZoom(0.5f);
+        transform.position = Size / 2f;
     }
 
     public void LateUpdate()
@@ -59,6 +76,24 @@ public class HexMapCamera : MonoBehaviour
 
         Vector3 position = transform.position;
         position += direction * distance;
-        transform.localPosition = position;
+        transform.localPosition = ClampPosition(position);
+    }
+
+    private Vector3 ClampPosition(Vector3 position)
+    {
+        float xMax = (grid.ChunkCountX * HexMetrics.chunkSizeX - 0.5f) * (2f * HexMetrics.innerRadius);
+        position.x = Mathf.Clamp(position.x, 0f, xMax);
+
+        float zMax = -(grid.ChunkCountZ * HexMetrics.chunkSizeZ - 1) * (1.5f * HexMetrics.outerRadius);
+        position.z = Mathf.Clamp(position.z, zMax, 0f);
+
+        return position;
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawCube(Size / 2f, Vector3.one);
+        Gizmos.DrawWireCube(Size / 2f, Size);
     }
 }
