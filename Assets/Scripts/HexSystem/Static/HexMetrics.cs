@@ -13,7 +13,7 @@ public static class HexMetrics
     /// <summary>
     /// Radius that defines the corners of the Hex
     /// </summary>
-    public const float outerRadius = 10f;
+    public const float outerRadius = 1f;
     /// <summary>
     /// Radius that is the extents of the edges
     /// </summary>
