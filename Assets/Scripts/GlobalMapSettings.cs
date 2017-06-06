@@ -21,13 +21,17 @@ public class GlobalMapSettings : Singleton<GlobalMapSettings>
 
     public int Width
     {
-        get { return ChunkCountX * HexMetrics.chunkSizeX; }
+        get
+        {
+            return ChunkCountX * HexMetrics.chunkSizeX;
+        }
     }
 
     public int Height
     {
-        get { return ChunkCountZ * HexMetrics.chunkSizeZ; }
+        get
+        {
+            return ChunkCountZ * HexMetrics.chunkSizeZ;
+        }
     }
-
-
 }
