@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[ExecuteInEditMode]
 public class GlobalMapSettings : Singleton<GlobalMapSettings>
 {
     [SerializeField]
