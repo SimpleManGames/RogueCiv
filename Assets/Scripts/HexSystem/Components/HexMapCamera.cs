@@ -2,9 +2,13 @@
 
 public class HexMapCamera : MonoBehaviour
 {
-    Transform swivel, stick;
+    Transform swivel { get { return transform.GetChild(0); } }
+    Transform stick { get { return swivel.GetChild(0); } }
 
     float zoom = 0f;
+    float rotationAngle;
+
+    private float zoomScrollIncrements = 0.1f;
 
     [SerializeField]
     private float stickMinZoom;
@@ -22,6 +26,9 @@ public class HexMapCamera : MonoBehaviour
     private float moveSpeedMaxZoom;
 
     [SerializeField]
+    private float rotationSpeed;
+
+    [SerializeField]
     private HexGrid grid;
 
     private Vector3 Size
@@ -32,16 +39,11 @@ public class HexMapCamera : MonoBehaviour
         }
     }
 
-    public void Awake()
-    {
-        swivel = transform.GetChild(0);
-        stick = swivel.GetChild(0);
-    }
-
     public void Start()
     {
         AdjustZoom(0.5f);
         transform.position = Size / 2f;
+        AdjustRotation(0f);
     }
 
     public void LateUpdate()
@@ -49,6 +51,10 @@ public class HexMapCamera : MonoBehaviour
         float zoomDelta = Input.GetAxis("Mouse ScrollWheel");
         if (zoomDelta != 0f)
             AdjustZoom(zoomDelta);
+
+        float rotationDelta = Input.GetAxis("Rotation");
+        if (rotationDelta != 0f)
+            AdjustRotation(rotationDelta);
 
         float xDelta = Input.GetAxis("Horizontal");
         float zDelta = Input.GetAxis("Vertical");
@@ -68,9 +74,21 @@ public class HexMapCamera : MonoBehaviour
         swivel.localRotation = Quaternion.Euler(angle, 0f, 0f);
     }
 
+    private void AdjustRotation(float delta)
+    {
+        rotationAngle += delta * Time.fixedDeltaTime * rotationSpeed;
+
+        if (rotationAngle < 0f)
+            rotationAngle += 360f;
+        else if (rotationAngle >= 360f)
+            rotationAngle -= 360f;
+
+        transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+    }
+
     private void AdjustPosition(float xDelta, float zDelta)
     {
-        Vector3 direction = new Vector3(xDelta, 0f, zDelta).normalized;
+        Vector3 direction = transform.localRotation * new Vector3(xDelta, 0f, zDelta).normalized;
         float damping = Mathf.Max(Mathf.Abs(xDelta), Mathf.Abs(zDelta));
         float distance = Mathf.Lerp(moveSpeedMinZoom, moveSpeedMaxZoom, zoom) * damping * Time.fixedDeltaTime;
 
@@ -95,5 +113,15 @@ public class HexMapCamera : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawCube(Size / 2f, Vector3.one);
         Gizmos.DrawWireCube(Size / 2f, Size);
+
+        Gizmos.color = Color.green;
+
+        Vector3 from = new Vector3(0f, 0f, stickMaxZoom);
+        from = transform.position + stick.TransformVector(from);
+
+        Vector3 to = new Vector3(0f, 0f, stickMinZoom);
+        to = transform.position + stick.TransformVector(to);
+
+        Gizmos.DrawLine(from, to);
     }
 }
