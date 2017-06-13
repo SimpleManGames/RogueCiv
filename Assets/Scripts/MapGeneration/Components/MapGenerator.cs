@@ -56,6 +56,7 @@ public sealed class MapGenerator : Singleton<MapGenerator>
         ApplyHeightMultiplier(mapSettings.heightMultiplier, mapSettings.heightCurve);
     }
 
+    [Button(ButtonMode.DisabledInPlayMode)]
     public void GenerateMap()
     {
         falloffMap = Falloff.GenerateFalloffMap(mapWidth, mapHeight);
