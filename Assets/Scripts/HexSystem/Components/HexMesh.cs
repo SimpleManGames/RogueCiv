@@ -99,7 +99,7 @@ public class HexMesh : MonoBehaviour
 
         TriangulateEdgeStrip(begin, beginCell.Color, e2, c2);
 
-        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        for (int i = 2; i < HexMetrics.Instance.terraceSteps; i++)
         {
             EdgeVertices e1 = e2;
             Color c1 = c2;
@@ -154,7 +154,7 @@ public class HexMesh : MonoBehaviour
         AddTriangle(begin, v3, v4);
         AddTriangleColor(beginCell.Color, c3, c4);
 
-        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        for (int i = 2; i < HexMetrics.Instance.terraceSteps; i++)
         {
             Vector3 v1 = v3;
             Vector3 v2 = v4;
@@ -221,7 +221,7 @@ public class HexMesh : MonoBehaviour
         AddTriangleUnperturbed(Perturb(begin), v2, boundary);
         AddTriangleColor(beginCell.Color, c2, boundaryColor);
 
-        for (int i = 2; i < HexMetrics.terraceSteps; i++)
+        for (int i = 2; i < HexMetrics.Instance.terraceSteps; i++)
         {
             Vector3 v1 = v2;
             Color c1 = c2;
@@ -300,9 +300,9 @@ public class HexMesh : MonoBehaviour
     private Vector3 Perturb(Vector3 position)
     {
         Vector4 sample = HexMetrics.SampleNoise(position);
-        position.x += (sample.x * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        position.x += (sample.x * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
         //position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
-        position.z += (sample.z * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        position.z += (sample.z * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
         return position;
     }
 }

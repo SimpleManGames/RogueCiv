@@ -23,7 +23,7 @@ public class GlobalMapSettings : Singleton<GlobalMapSettings>
     {
         get
         {
-            return ChunkCountX * HexMetrics.chunkSizeX;
+            return ChunkCountX * HexMetrics.Instance.chunkSizeX;
         }
     }
 
@@ -31,7 +31,7 @@ public class GlobalMapSettings : Singleton<GlobalMapSettings>
     {
         get
         {
-            return ChunkCountZ * HexMetrics.chunkSizeZ;
+            return ChunkCountZ * HexMetrics.Instance.chunkSizeZ;
         }
     }
 }

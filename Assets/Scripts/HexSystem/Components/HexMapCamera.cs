@@ -35,7 +35,7 @@ public class HexMapCamera : MonoBehaviour
     {
         get
         {
-            return new Vector3((grid.ChunkCountX * HexMetrics.chunkSizeX - 0.5f) * (2f * HexMetrics.innerRadius), 0f, -(grid.ChunkCountZ * HexMetrics.chunkSizeZ - 1) * (1.5f * HexMetrics.outerRadius));
+            return new Vector3((grid.ChunkCountX * HexMetrics.Instance.chunkSizeX - 0.5f) * (2f * HexMetrics.Instance.innerRadius), 0f, -(grid.ChunkCountZ * HexMetrics.Instance.chunkSizeZ - 1) * (1.5f * HexMetrics.Instance.outerRadius));
         }
     }
 
@@ -99,10 +99,10 @@ public class HexMapCamera : MonoBehaviour
 
     private Vector3 ClampPosition(Vector3 position)
     {
-        float xMax = (grid.ChunkCountX * HexMetrics.chunkSizeX - 0.5f) * (2f * HexMetrics.innerRadius);
+        float xMax = (grid.ChunkCountX * HexMetrics.Instance.chunkSizeX - 0.5f) * (2f * HexMetrics.Instance.innerRadius);
         position.x = Mathf.Clamp(position.x, 0f, xMax);
 
-        float zMax = -(grid.ChunkCountZ * HexMetrics.chunkSizeZ - 1) * (1.5f * HexMetrics.outerRadius);
+        float zMax = -(grid.ChunkCountZ * HexMetrics.Instance.chunkSizeZ - 1) * (1.5f * HexMetrics.Instance.outerRadius);
         position.z = Mathf.Clamp(position.z, zMax, 0f);
 
         return position;

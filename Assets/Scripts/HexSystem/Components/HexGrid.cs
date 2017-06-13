@@ -83,7 +83,7 @@ public class HexGrid : Singleton<HexGrid>
     /// </summary>
     private void CreateCell(int x, int z, int i)
     {
-        Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMetrics.innerRadius * 2f), 0f, -(z * (HexMetrics.outerRadius * 1.5f)));
+        Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMetrics.Instance.innerRadius * 2f), 0f, -(z * (HexMetrics.Instance.outerRadius * 1.5f)));
         HexObject hexObject = Hexes.Add<HexObject>(Instantiate(hexPrefab));
         hexObject.Index = i;
         hexObject.Hex = new Hex(CubeCoord.OddRowToCube(new OffsetCoord(x, z)));
@@ -97,13 +97,13 @@ public class HexGrid : Singleton<HexGrid>
 
     private void AddHexToChunk(int x, int z, HexObject hex)
     {
-        int chunkX = x / HexMetrics.chunkSizeX;
-        int chunkZ = z / HexMetrics.chunkSizeZ;
+        int chunkX = x / HexMetrics.Instance.chunkSizeX;
+        int chunkZ = z / HexMetrics.Instance.chunkSizeZ;
         HexGridChunk chunk = chunks[chunkX + chunkZ * ChunkCountX];
 
-        int localX = x - chunkX * HexMetrics.chunkSizeX;
-        int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
-        chunk.AddHex(localX + localZ * HexMetrics.chunkSizeX, hex);
+        int localX = x - chunkX * HexMetrics.Instance.chunkSizeX;
+        int localZ = z - chunkZ * HexMetrics.Instance.chunkSizeZ;
+        chunk.AddHex(localX + localZ * HexMetrics.Instance.chunkSizeX, hex);
     }
 
     new public void Awake()

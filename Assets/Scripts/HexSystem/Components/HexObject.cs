@@ -47,8 +47,8 @@ public class HexObject : MonoBehaviour
 
             elevation = value;
             Vector3 position = transform.localPosition;
-            position.y = value * HexMetrics.elevationStep;
-            position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.elevationPerturbStrength;
+            position.y = value * HexMetrics.Instance.elevationStep;
+            position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.Instance.elevationPerturbStrength;
             transform.localPosition = position;
             GetComponentInChildren<Text>().text = (Mathf.Round(elevation * 100f) / 100f).ToString();
             Refresh();

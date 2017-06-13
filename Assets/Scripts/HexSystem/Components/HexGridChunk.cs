@@ -23,7 +23,7 @@ public class HexGridChunk : MonoBehaviour
 
     void Awake()
     {
-        Hexes = new HexObject[HexMetrics.chunkSizeX * HexMetrics.chunkSizeZ];
+        Hexes = new HexObject[HexMetrics.Instance.chunkSizeX * HexMetrics.Instance.chunkSizeZ];
         hexMesh = GetComponentInChildren<HexMesh>();
     }
 
