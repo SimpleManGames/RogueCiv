@@ -44,6 +44,7 @@ public class HexMesh : MonoBehaviour
     private void Triangulate(HexDirection direction, HexObject cell)
     {
         Vector3 center = cell.Position;
+
         EdgeVertices e = new EdgeVertices(center + HexMetrics.GetFirstSolidCorner(direction), center + HexMetrics.GetSecondSolidCorner(direction));
 
         TriangulateEdgeFan(center, e, cell.Color);
