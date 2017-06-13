@@ -58,7 +58,7 @@ public static class HexMetrics
     /// <summary>
     /// How mixed up the hexes looked when perturbeds
     /// </summary>
-    public const float cellPerturbStrength = 2f;
+    public const float cellPerturbStrength = 0f;//2f;
     /// <summary>
     /// How much the vertices are altered
     /// </summary>
@@ -145,13 +145,15 @@ public static class HexMetrics
     /// <summary>
     /// Figures out which edge type we should we when creating the mesh
     /// </summary>
-    public static HexEdgeType GetEdgeType(int e1, int e2)
+    public static HexEdgeType GetEdgeType(float e1, float e2)
     {
+        e1 = Mathf.RoundToInt(e1);
+        e2 = Mathf.RoundToInt(e2);
         if (e1 == e2)
             return HexEdgeType.Flat;
 
-        int delta = e2 - e1;
-        if (delta <= 1 || delta >= -1)
+        int delta = (int)e2 - (int)e1;
+        if (delta == 1 || delta == -1)
             return HexEdgeType.Slope;
 
         return HexEdgeType.Cliff;

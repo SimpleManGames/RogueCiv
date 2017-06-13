@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HexGrid : Singleton<HexGrid>
@@ -113,5 +114,7 @@ public class HexGrid : Singleton<HexGrid>
         Hexes = new HashSet<HexObject>();
         CreateChunks();
         CreateCells();
+
+        chunks.ToList().ForEach(x => x.Refresh());
     }
 }
