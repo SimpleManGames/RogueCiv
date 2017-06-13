@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 [Serializable]
 public class HexObject : MonoBehaviour
@@ -49,6 +50,7 @@ public class HexObject : MonoBehaviour
             position.y = value * HexMetrics.elevationStep;
             position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.elevationPerturbStrength;
             transform.localPosition = position;
+            GetComponentInChildren<Text>().text = (Mathf.Round(elevation * 100f) / 100f).ToString();
             Refresh();
         }
     }
@@ -82,11 +84,11 @@ public class HexObject : MonoBehaviour
 
     public HexEdgeType GetEdgeType(HexDirection direction)
     {
-        return HexMetrics.GetEdgeType((int)elevation, (int)HexGrid.Instance.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
+        return HexMetrics.GetEdgeType(elevation, HexGrid.Instance.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
     }
 
     public HexEdgeType GetEdgeType(HexObject other)
     {
-        return HexMetrics.GetEdgeType((int)Elevation, (int)other.Elevation);
+        return HexMetrics.GetEdgeType(Elevation, other.Elevation);
     }
 }
