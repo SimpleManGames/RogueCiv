@@ -41,6 +41,14 @@ public class HexGrid : Singleton<HexGrid>
         get { return GlobalMapSettings.Instance.Height; }
     }
 
+    private Vector3 Size
+    {
+        get
+        {
+            return new Vector3((ChunkCountX * HexMetrics.Instance.chunkSizeX - 0.5f) * (2f * HexMetrics.Instance.innerRadius), 0f, -(ChunkCountZ * HexMetrics.Instance.chunkSizeZ - 1) * (1.5f * HexMetrics.Instance.outerRadius));
+        }
+    }
+
     private HexMesh hexMesh;
     private HexMesh HexMesh
     {
@@ -116,5 +124,11 @@ public class HexGrid : Singleton<HexGrid>
         CreateCells();
 
         chunks.ToList().ForEach(x => x.Refresh());
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireCube(Size / 2f, Size);
     }
 }

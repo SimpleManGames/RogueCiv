@@ -110,10 +110,6 @@ public class HexMapCamera : MonoBehaviour
 
     public void OnDrawGizmos()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawCube(Size / 2f, Vector3.one);
-        Gizmos.DrawWireCube(Size / 2f, Size);
-
         Gizmos.color = Color.green;
 
         Vector3 from = new Vector3(0f, 0f, stickMaxZoom);
