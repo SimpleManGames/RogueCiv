@@ -63,6 +63,24 @@ public class HexObject : MonoBehaviour
         }
     }
 
+    private Canvas canvas;
+    public Canvas Canvas
+    {
+        get
+        {
+            return canvas == null ? canvas = GetComponentInChildren<Canvas>() : canvas;
+        }
+    }
+
+    private Text text;
+    public Text Text
+    {
+        get
+        {
+            return text == null ? text = Canvas.GetComponentInChildren<Text>() : text;
+        }
+    }
+
     public HexGridChunk chunk;
 
     private void Refresh()
