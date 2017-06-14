@@ -47,6 +47,11 @@ public class HexMesh : MonoBehaviour
 
         EdgeVertices e = new EdgeVertices(center + HexMetrics.GetFirstSolidCorner(direction), center + HexMetrics.GetSecondSolidCorner(direction));
 
+        Vector3 canvasPosition = Perturb(center);
+        canvasPosition.y += 0.1f;
+
+        cell.Canvas.GetComponent<RectTransform>().position = canvasPosition;
+
         TriangulateEdgeFan(center, e, cell.Color);
 
         if (direction <= HexDirection.SE)
