@@ -14,6 +14,7 @@ public class HexMetrics : Singleton<HexMetrics>
     /// Radius that defines the corners of the Hex
     /// </summary>
     [SerializeField]
+    [Tooltip("Size of the circle that the corners of the hex will sit on")]
     private float _outRadius = 1f;
     public float outerRadius { get { return _outRadius; } }
     /// <summary>
@@ -25,6 +26,8 @@ public class HexMetrics : Singleton<HexMetrics>
     /// Fill percent of the Hex before the bleed to the next cell starts
     /// </summary>
     [SerializeField]
+    [Range(0, 1)]
+    [Tooltip("How much of the hex will be solid color")]
     private float _solidFactor = 0.8f;
     public float solidFactor { get { return _solidFactor; } }
     /// <summary>
@@ -41,6 +44,7 @@ public class HexMetrics : Singleton<HexMetrics>
     /// How many terraces will be made when the conditions to generate them happen
     /// </summary>
     [SerializeField]
+    [Tooltip("The amount of steps for the terrace bridge")]
     private int _terracesPerSlope = 2;
     public int terracesPerSlope { get { return _terracesPerSlope; } }
     /// <summary>
@@ -65,25 +69,30 @@ public class HexMetrics : Singleton<HexMetrics>
     /// How mixed up the hexes looked when perturbeds
     /// </summary>
     [SerializeField]
+    [Tooltip("Amount of contorting the hex mesh will have")]
     private float _cellPerturbStrength = 2f;
     public float cellPerturbStrength { get { return _cellPerturbStrength; } }
     /// <summary>
     /// How much the vertices are altered
     /// </summary>
     [SerializeField]
+    [Tooltip("The effect the perturb will have")]
     private float _noiseScale = .003f;
     public float noiseScale { get { return _noiseScale; } }
     /// <summary>
     /// How shifted eached elevation level will be going up
     /// </summary>
     [SerializeField]
+    [Tooltip("Amount of elevation will be altered")]
     private float _elevationPerturbStrength = 1.2f;
     public float elevationPerturbStrength { get { return _elevationPerturbStrength; } }
 
     [SerializeField]
+    [Tooltip("How many chunks are in the X direction")]
     private int _chunkSizeX = 5;
     public int chunkSizeX { get { return _chunkSizeX; } }
     [SerializeField]
+    [Tooltip("How many chunks are in the Z direction")]
     private int _chunkSizeY = 5;
     public int chunkSizeZ { get { return _chunkSizeY; } }
 
