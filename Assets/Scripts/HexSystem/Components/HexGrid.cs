@@ -129,6 +129,6 @@ public class HexGrid : Singleton<HexGrid>
     public void OnDrawGizmos()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireCube(Size / 2f, Size);
+        Gizmos.DrawWireCube(new Vector3(Size.x / 2f, MapGenerator.Instance.mapSettings.heightMultiplier / 2f, Size.z / 2f), new Vector3(Size.x, MapGenerator.Instance.mapSettings.heightMultiplier, Size.z));
     }
 }

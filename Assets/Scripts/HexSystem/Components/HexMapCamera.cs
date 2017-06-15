@@ -116,19 +116,16 @@ public class HexMapCamera : MonoBehaviour
 
     private void AdjustHeight()
     {
-        Vector3 linecastStartPosition = Vector3.up + new Vector3(transform.position.x, stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y, transform.position.z);
-        Vector3 linecastEndPosition = new Vector3(transform.position.x, 0f, transform.position.z);
-        RaycastHit hit;
+        Vector3 groundLinecastStartPosition = Vector3.up + new Vector3(transform.position.x, stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y, transform.position.z);
+        Vector3 groundLinecastEndPosition = new Vector3(transform.position.x, 0f, transform.position.z) + Vector3.down;
+        RaycastHit groundHit;
+        Debug.DrawLine(groundLinecastStartPosition, groundLinecastEndPosition);
 
-        Debug.DrawLine(linecastStartPosition, linecastEndPosition);
-        if (Physics.Linecast(linecastStartPosition, linecastEndPosition, out hit))
+        if (Physics.Linecast(groundLinecastStartPosition, groundLinecastEndPosition, out groundHit))
         {
-            DebugExtension.DebugPoint(hit.point);
-            
-            float maxDistance = stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y;
-            float currentHeight = stick.TransformDirection(transform.position).y;
-
-            transform.position = Vector3.Slerp(transform.position, hit.point, cameraElevationSpeed * Time.deltaTime);
+            DebugExtension.DebugPoint(groundHit.point);
+            float difference = Mathf.Abs(transform.position.y - groundHit.point.y);
+            transform.position = Vector3.Slerp(transform.position, groundHit.point, cameraElevationSpeed * difference * Time.deltaTime);
         }
     }
 
