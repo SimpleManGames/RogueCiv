@@ -29,6 +29,10 @@ public class HexMapCamera : MonoBehaviour
     private float rotationSpeed;
 
     [SerializeField]
+    [Tooltip("That good ass slerp")]
+    private float cameraElevationSpeed;
+
+    [SerializeField]
     private HexGrid grid;
 
     private Vector3 Size
@@ -61,6 +65,8 @@ public class HexMapCamera : MonoBehaviour
 
         if (xDelta != 0f || zDelta != 0f)
             AdjustPosition(xDelta, zDelta);
+
+        AdjustHeight();
     }
 
     private void AdjustZoom(float delta)
@@ -106,6 +112,24 @@ public class HexMapCamera : MonoBehaviour
         position.z = Mathf.Clamp(position.z, zMax, 0f);
 
         return position;
+    }
+
+    private void AdjustHeight()
+    {
+        Vector3 linecastStartPosition = Vector3.up + new Vector3(transform.position.x, stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y, transform.position.z);
+        Vector3 linecastEndPosition = new Vector3(transform.position.x, 0f, transform.position.z);
+        RaycastHit hit;
+
+        Debug.DrawLine(linecastStartPosition, linecastEndPosition);
+        if (Physics.Linecast(linecastStartPosition, linecastEndPosition, out hit))
+        {
+            DebugExtension.DebugPoint(hit.point);
+            
+            float maxDistance = stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y;
+            float currentHeight = stick.TransformDirection(transform.position).y;
+
+            transform.position = Vector3.Slerp(transform.position, hit.point, cameraElevationSpeed * Time.deltaTime);
+        }
     }
 
     public void OnDrawGizmos()

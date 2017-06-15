@@ -32,6 +32,8 @@ public class HexMesh : MonoBehaviour
         hexMesh.triangles = triangles.ToArray();
         hexMesh.colors = colors.ToArray();
         hexMesh.RecalculateNormals();
+
+        GetComponent<MeshCollider>().sharedMesh = hexMesh;
     }
     /// <summary>
     /// Breaks down the main triangulate function into smaller more managable bits
