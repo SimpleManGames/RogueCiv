@@ -46,7 +46,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 break;
             case DebugType.CubeCoord:
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = true);
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Hex.cubeCoords.ToString());
+                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Hex.ToString());
                 break;
             case DebugType.Height:
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = true);
@@ -58,7 +58,10 @@ public class HexDebugManager : Singleton<HexDebugManager>
     new private void Awake()
     {
         base.Awake();
+    }
 
+    private void Start()
+    {
         layerDebugText = GameObject.Find("Debug Text").GetComponent<Text>();
         layerDebugText.text = "";
     }
