@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 public class HexMapCamera : MonoBehaviour
@@ -152,7 +151,18 @@ public class HexMapCamera : MonoBehaviour
 
         Vector3[] outCorners = new Vector3[4];
         Camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), Camera.nearClipPlane, Camera.MonoOrStereoscopicEye.Mono, outCorners);
-        outCorners.ToList().ForEach(c => DebugExtension.DebugPoint(stick.TransformVector(c ) + stick.position, 0.1f));
+        outCorners.ToList().ForEach(c => DebugExtension.DebugPoint(stick.TransformVector(c) + stick.position, 0.1f));
+
+        foreach (Vector3 point in outCorners)
+        {
+            Debug.DrawLine(Camera.transform.position, stick.TransformVector(point) + stick.position);
+            if (Physics.Linecast(stick.TransformVector(point) + stick.position, Camera.transform.position))
+                AdjustZoom(-0.01f);
+        }
+
+        Debug.DrawLine(Camera.transform.position, Camera.transform.position + Camera.transform.forward * Camera.nearClipPlane);
+        if (Physics.Linecast(Camera.transform.position + Camera.transform.forward * Camera.nearClipPlane, Camera.transform.position))
+            AdjustZoom(-0.01f);
 
         // From Camera to each corner
         // Camera pos + normal * near distance
@@ -170,6 +180,6 @@ public class HexMapCamera : MonoBehaviour
         to = transform.position + stick.TransformVector(to);
 
         Gizmos.DrawLine(from, to);
-        
+
     }
 }
