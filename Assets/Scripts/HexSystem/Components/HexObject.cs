@@ -98,7 +98,7 @@ public class HexObject : MonoBehaviour
                 }
             }
         }
-    }
+    } 
 
     public HexEdgeType GetEdgeType(HexDirection direction)
     {

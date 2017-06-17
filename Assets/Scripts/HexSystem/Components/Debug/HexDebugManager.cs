@@ -17,19 +17,27 @@ public class HexDebugManager : Singleton<HexDebugManager>
     private float fadeOutTime = 3f;
     private float currentFadeOutTime = 0f;
 
+    private bool clickedButton = false;
+
     private void F1Menu()
     {
-        if (Input.GetKeyDown(KeyCode.F1))
+        if (Input.GetAxis("Debug Menu") == 1)
         {
-            debugType++;
-            if (Enum.GetValues(typeof(DebugType)).Length - 1 < (int)debugType)
-                debugType = 0;
+            if (!clickedButton)
+            {
+                clickedButton = true;
 
-            layerDebugText.color = Color.white;
-            layerDebugText.text = debugType.ToString();
+                if (Enum.GetValues(typeof(DebugType)).Length - 1 < (int)++debugType)
+                    debugType = 0;
 
-            UpdateValues();
+                layerDebugText.color = Color.white;
+                layerDebugText.text = debugType.ToString();
+
+                UpdateValues();
+            }
         }
+        else
+            clickedButton = false;
     }
 
     private void UpdateValues()
@@ -45,11 +53,9 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Index.ToString());
                 break;
             case DebugType.CubeCoord:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = true);
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Hex.ToString());
+                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Hex.cubeCoords.ToString());
                 break;
             case DebugType.Height:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = true);
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Elevation.ToString());
                 break;
         }

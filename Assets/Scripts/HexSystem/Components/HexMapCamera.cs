@@ -1,9 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEditor;
+using UnityEngine;
 
 public class HexMapCamera : MonoBehaviour
 {
     Transform swivel { get { return transform.GetChild(0); } }
     Transform stick { get { return swivel.GetChild(0); } }
+
+    private Camera _camera;
+    private Camera Camera
+    {
+        get
+        {
+            if (_camera == null)
+                _camera = stick.GetChild(0).gameObject.GetComponent<Camera>();
+
+            return _camera;
+        }
+    }
 
     float zoom = 0f;
     float rotationAngle;
@@ -50,7 +64,7 @@ public class HexMapCamera : MonoBehaviour
         AdjustRotation(0f);
     }
 
-    public void Update()
+    public void LateUpdate()
     {
         float zoomDelta = Mathf.Clamp(Input.GetAxis("Zoom"), -zoomScrollIncrements, zoomScrollIncrements);
         if (zoomDelta != 0f)
@@ -67,6 +81,8 @@ public class HexMapCamera : MonoBehaviour
             AdjustPosition(xDelta, zDelta);
 
         AdjustHeight();
+
+        HandleCameraClip();
     }
 
     private void AdjustZoom(float delta)
@@ -119,6 +135,7 @@ public class HexMapCamera : MonoBehaviour
         Vector3 groundLinecastStartPosition = Vector3.up + new Vector3(transform.position.x, stick.TransformVector(new Vector3(0f, 0f, stickMinZoom)).y, transform.position.z);
         Vector3 groundLinecastEndPosition = new Vector3(transform.position.x, 0f, transform.position.z) + Vector3.down;
         RaycastHit groundHit;
+
         Debug.DrawLine(groundLinecastStartPosition, groundLinecastEndPosition);
 
         if (Physics.Linecast(groundLinecastStartPosition, groundLinecastEndPosition, out groundHit))
@@ -127,6 +144,19 @@ public class HexMapCamera : MonoBehaviour
             float difference = Mathf.Abs(transform.position.y - groundHit.point.y);
             transform.position = Vector3.Slerp(transform.position, groundHit.point, cameraElevationSpeed * difference * Time.deltaTime);
         }
+    }
+
+    private void HandleCameraClip()
+    {
+        var planes = GeometryUtility.CalculateFrustumPlanes(stick.GetChild(0).gameObject.GetComponent<Camera>());
+
+        Vector3[] outCorners = new Vector3[4];
+        Camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), Camera.nearClipPlane, Camera.MonoOrStereoscopicEye.Mono, outCorners);
+        outCorners.ToList().ForEach(c => DebugExtension.DebugPoint(stick.TransformVector(c ) + stick.position, 0.1f));
+
+        // From Camera to each corner
+        // Camera pos + normal * near distance
+        // If one hits, we have collisions
     }
 
     public void OnDrawGizmos()
@@ -140,5 +170,6 @@ public class HexMapCamera : MonoBehaviour
         to = transform.position + stick.TransformVector(to);
 
         Gizmos.DrawLine(from, to);
+        
     }
 }
