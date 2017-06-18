@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour
 {
+    public bool useCollider, useColors, useUVCoordinates;
+
     private Mesh hexMesh;
     private MeshCollider _meshCollider;
     private MeshCollider meshCollider
@@ -13,12 +16,21 @@ public class HexMesh : MonoBehaviour
             if (_meshCollider == null)
                 _meshCollider = GetComponent<MeshCollider>();
 
+            if (_meshCollider == null && useCollider)
+                _meshCollider = gameObject.AddComponent<MeshCollider>();
+
             return _meshCollider;
         }
     }
-    static List<Vector3> vertices = new List<Vector3>();
-    static List<int> triangles = new List<int>();
-    static List<Color> colors = new List<Color>();
+
+    [NonSerialized]
+    List<Vector3> vertices = new List<Vector3>();
+    [NonSerialized]
+    List<int> triangles = new List<int>();
+    [NonSerialized]
+    List<Color> colors = new List<Color>();
+    [NonSerialized]
+    List<Vector2> uvs;
 
     void Awake()
     {
@@ -29,18 +41,38 @@ public class HexMesh : MonoBehaviour
     public void Clear()
     {
         hexMesh.Clear();
-        vertices.Clear();
-        colors.Clear();
-        triangles.Clear();
+        vertices = ListPool<Vector3>.Get();
+        if (useColors)
+            colors = ListPool<Color>.Get();
+        triangles = ListPool<int>.Get();
+        if (useUVCoordinates)
+            uvs = ListPool<Vector2>.Get();
     }
 
     public void Apply()
     {
         hexMesh.SetVertices(vertices);
-        hexMesh.SetColors(colors);
+        ListPool<Vector3>.Add(vertices);
+
+        if (useColors)
+        {
+            hexMesh.SetColors(colors);
+            ListPool<Color>.Add(colors);
+        }
+
+        if (useUVCoordinates)
+        {
+            hexMesh.SetUVs(0, uvs);
+            ListPool<Vector2>.Add(uvs);
+        }
+
         hexMesh.SetTriangles(triangles, 0);
+        ListPool<int>.Add(triangles);
+
         hexMesh.RecalculateNormals();
-        meshCollider.sharedMesh = hexMesh;
+
+        if (useCollider)
+            meshCollider.sharedMesh = hexMesh;
     }
 
     public void AddTriangle(Vector3 v1, Vector3 v2, Vector3 v3)
@@ -92,5 +124,26 @@ public class HexMesh : MonoBehaviour
     public void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
     {
         colors.AddRange(new Color[4] { c1, c2, c3, c4 });
+    }
+
+    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector3 uv3)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
+    }
+    public void AddQuadUV(Vector2 uv1, Vector2 uv2, Vector3 uv3, Vector3 uv4)
+    {
+        uvs.Add(uv1);
+        uvs.Add(uv2);
+        uvs.Add(uv3);
+        uvs.Add(uv4);
+    }
+    public void AddQuadUV(float uMin, float uMax, float vMin, float vMax)
+    {
+        uvs.Add(new Vector2(uMin, vMin));
+        uvs.Add(new Vector2(uMax, vMin));
+        uvs.Add(new Vector2(uMin, vMax));
+        uvs.Add(new Vector2(uMax, vMax));
     }
 }
