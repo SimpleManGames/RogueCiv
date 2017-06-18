@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HexGrid : Singleton<HexGrid>
 {
-    public HexObject hexPrefab = new HexObject();
+    public HexObject hexPrefab;
 
     public HexGridChunk chunkPrefab;
 

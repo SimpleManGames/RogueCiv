@@ -17,10 +17,12 @@ public class HexMetrics : Singleton<HexMetrics>
     [Tooltip("Size of the circle that the corners of the hex will sit on")]
     private float _outRadius = 1f;
     public float outerRadius { get { return _outRadius; } }
+    public float outerToInner { get { return 0.866025404f; } }
     /// <summary>
     /// Radius that is the extents of the edges
     /// </summary>
-    public float innerRadius { get { return outerRadius * 0.866025404f; } }
+    public float innerRadius { get { return outerRadius * outerToInner; } }
+    public float innerToOuter { get { return 1f / outerToInner; } }
 
     /// <summary>
     /// Fill percent of the Hex before the bleed to the next cell starts
@@ -88,6 +90,11 @@ public class HexMetrics : Singleton<HexMetrics>
     public float elevationPerturbStrength { get { return _elevationPerturbStrength; } }
 
     [SerializeField]
+    [Tooltip("How deep the rivers will be inset")]
+    private float _streamBedElevationOffset = -1f;
+    public float streamBedElevationOffset { get { return _streamBedElevationOffset; } }
+
+    [SerializeField]
     [Tooltip("How many chunks are in the X direction")]
     private int _chunkSizeX = 5;
     public int chunkSizeX { get { return _chunkSizeX; } }
@@ -143,6 +150,11 @@ public class HexMetrics : Singleton<HexMetrics>
     public static Vector3 GetSecondSolidCorner(HexDirection direction)
     {
         return Instance.corners[(int)direction + 1] * Instance.solidFactor;
+    }
+
+    public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
+    {
+        return (Instance.corners[(int)direction] + Instance.corners[(int)direction + 1]) * (0.5f * Instance.solidFactor);
     }
 
     /// <summary>

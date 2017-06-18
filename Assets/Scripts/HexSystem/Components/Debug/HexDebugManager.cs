@@ -13,10 +13,6 @@ public class HexDebugManager : Singleton<HexDebugManager>
 
     private Text layerDebugText;
 
-    private bool fadeDone = false;
-    private float fadeOutTime = 3f;
-    private float currentFadeOutTime = 0f;
-
     private bool clickedButton = false;
 
     private void F1Menu()
@@ -49,14 +45,25 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = false);
                 break;
             case DebugType.Index:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = true);
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Index.ToString());
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Canvas.enabled = true;
+                    h.Text.color = Color.white;
+                    h.Text.text = h.Index.ToString();
+                });
                 break;
             case DebugType.CubeCoord:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Hex.cubeCoords.ToString());
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Text.text = h.Hex.cubeCoords.ToString();
+                });
                 break;
             case DebugType.Height:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Elevation.ToString());
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Text.color = Color.white;
+                    h.Text.text = h.Elevation.ToString();
+                });
                 break;
             case DebugType.River:
                 HexGrid.Instance.Hexes.ToList().ForEach(h =>

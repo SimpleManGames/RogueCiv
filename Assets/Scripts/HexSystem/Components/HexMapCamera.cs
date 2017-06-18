@@ -147,8 +147,6 @@ public class HexMapCamera : MonoBehaviour
 
     private void HandleCameraClip()
     {
-        var planes = GeometryUtility.CalculateFrustumPlanes(stick.GetChild(0).gameObject.GetComponent<Camera>());
-
         Vector3[] outCorners = new Vector3[4];
         Camera.CalculateFrustumCorners(new Rect(0, 0, 1, 1), Camera.nearClipPlane, Camera.MonoOrStereoscopicEye.Mono, outCorners);
         outCorners.ToList().ForEach(c => DebugExtension.DebugPoint(stick.TransformVector(c) + stick.position, 0.1f));

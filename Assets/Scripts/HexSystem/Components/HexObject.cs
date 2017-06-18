@@ -51,7 +51,7 @@ public class HexObject : MonoBehaviour
         }
     }
 
-    private float elevation = float.MinValue;
+    private float elevation;
     public float Elevation
     {
         get { return elevation; }
@@ -107,6 +107,14 @@ public class HexObject : MonoBehaviour
     public bool HasRiverBeginOrEnd
     {
         get { return HasIncomingRiver != HasOutgoingRiver; }
+    }
+
+    public float StreamBedY
+    {
+        get
+        {
+            return (Elevation + HexMetrics.Instance.streamBedElevationOffset) * HexMetrics.Instance.elevationStep;
+        }
     }
 
     private Canvas canvas;

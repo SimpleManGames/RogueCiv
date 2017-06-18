@@ -182,7 +182,7 @@ public struct Hex
 
     public override string ToString()
     {
-        return string.Format("[<color=green>{0}</color>, <color=purple>{1}</color>, <color=blue>{2}</color>]", cubeCoords.Q, cubeCoords.R, cubeCoords.S);
+        return cubeCoords.Q.ToString() + cubeCoords.R.ToString() + cubeCoords.S.ToString();
     }
 
     #endregion
