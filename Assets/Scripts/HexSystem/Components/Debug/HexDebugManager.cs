@@ -7,7 +7,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
 {
     private enum DebugType
     {
-        None, Index, CubeCoord, Height
+        None, Index, CubeCoord, Height, River
     }
     private DebugType debugType;
 
@@ -57,6 +57,13 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 break;
             case DebugType.Height:
                 HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.text = h.Elevation.ToString());
+                break;
+            case DebugType.River:
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Text.color = Color.blue;
+                    h.Text.text = (h.HasIncomingRiver || h.HasOutgoingRiver) ? "River" : "";
+                });
                 break;
         }
     }

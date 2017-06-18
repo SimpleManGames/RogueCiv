@@ -88,6 +88,15 @@ public struct Hex
         return Direction((byte)direction);
     }
 
+    public static HexDirection Direction(Hex from, Hex to)
+    {
+        for (int i = 0; i < Directions.Count; i++)
+            if (Directions[i] == (to - from))
+                return (HexDirection)i;
+
+        return (HexDirection)(-1);
+    }
+
     /// <summary>
     /// Gets a neighbour based on a direction
     /// </summary>

@@ -79,11 +79,56 @@ public class HexGrid : Singleton<HexGrid>
         }
     }
 
+    private void CreateRivers(MapSettingsData data)
+    {
+        System.Random prng = new System.Random(data.noiseSetting.seed);
+        var terrainOnlyHexes = Hexes.ToList().Where(h => h.Elevation > 0);
+
+        for (int i = 0; i < data.riverCount; i++)
+        {
+            int riverLength = prng.Next((int)data.riverLengthMinMax[0], (int)data.riverLengthMinMax[1]);
+
+            // Start the river
+            HexObject currentHex = terrainOnlyHexes.ToArray()[prng.Next(0, terrainOnlyHexes.Count())];
+            // Get neighbour to connect to
+            HexObject nextLowestNeighbour = Instance.FindHexObject(Hex.Neighbours(currentHex.Hex).OrderBy(n => Instance.FindHexObject(n.cubeCoords).Elevation).FirstOrDefault().cubeCoords);
+
+            for (int l = 0; l < riverLength; l++)
+            {
+                if (currentHex.Elevation == 0)
+                    break;
+
+                currentHex.SetOutgoingRiver(Hex.Direction(currentHex.Hex, nextLowestNeighbour.Hex));
+                if (nextLowestNeighbour == null)
+                    break;
+
+                currentHex = nextLowestNeighbour;
+                if (currentHex == null)
+                    break;
+
+                try
+                {
+                    var neighbours = Hex.Neighbours(currentHex.Hex);
+                    var hexObjectToFind = neighbours.OrderBy(n => Instance.FindHexObject(n.cubeCoords).Elevation).FirstOrDefault();
+                    nextLowestNeighbour = Instance.FindHexObject(hexObjectToFind.cubeCoords);
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+        }
+    }
+
     private void CreateCells()
     {
         for (int z = 0, i = 0; z < Height; z++)
+        {
             for (int x = 0; x < Width; x++)
+            {
                 CreateCell(x, z, i++);
+            }
+        }
     }
 
     /// <summary>
@@ -122,6 +167,7 @@ public class HexGrid : Singleton<HexGrid>
         Hexes = new HashSet<HexObject>();
         CreateChunks();
         CreateCells();
+        CreateRivers(MapGenerator.Instance.mapSettings);
 
         chunks.ToList().ForEach(x => x.Refresh());
     }

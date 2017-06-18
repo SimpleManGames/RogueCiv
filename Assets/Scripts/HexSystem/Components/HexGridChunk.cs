@@ -17,7 +17,7 @@ public class HexGridChunk : MonoBehaviour
     public void AddHex(int index, HexObject hex)
     {
         Hexes[index] = hex;
-        hex.chunk = this;
+        hex.Chunk = this;
         hex.transform.SetParent(transform, false);
     }
 

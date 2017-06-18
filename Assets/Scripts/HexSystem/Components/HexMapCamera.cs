@@ -163,10 +163,6 @@ public class HexMapCamera : MonoBehaviour
         Debug.DrawLine(Camera.transform.position, Camera.transform.position + Camera.transform.forward * Camera.nearClipPlane);
         if (Physics.Linecast(Camera.transform.position + Camera.transform.forward * Camera.nearClipPlane, Camera.transform.position))
             AdjustZoom(-0.01f);
-
-        // From Camera to each corner
-        // Camera pos + normal * near distance
-        // If one hits, we have collisions
     }
 
     public void OnDrawGizmos()

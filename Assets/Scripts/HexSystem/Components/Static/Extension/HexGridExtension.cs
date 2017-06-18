@@ -21,7 +21,8 @@ public static class HexGridExtension
     /// <returns>HexObject Component</returns>
     public static HexObject FindHexObject(this HexGrid Instance, CubeCoord c)
     {
-        return Instance.Hexes.ToList().Find(h => h.Hex.cubeCoords == c);
+        //return Instance.Hexes.ToList().Find(h => h.Hex.cubeCoords == c);
+        return Instance.Hexes.Where(h => h.Hex.cubeCoords == c).FirstOrDefault();
     }
 
     /// <summary>
@@ -33,7 +34,7 @@ public static class HexGridExtension
     /// <returns>HexObject Component</returns>
     public static HexObject FindHexObject(this HexGrid Instance, double q, double r, double s)
     {
-        return Instance.FindHexObject(new CubeCoord(q, r, s));
+        return Instance.FindHexObject(new CubeCoord(q, r, s)) ?? null;
     }
 
     public static HexObject[] FindHexObjects(this HexGrid Instance, Hex[] hexes)
