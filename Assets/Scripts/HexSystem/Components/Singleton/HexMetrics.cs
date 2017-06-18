@@ -210,4 +210,13 @@ public class HexMetrics : Singleton<HexMetrics>
     {
         return noiseSource.GetPixelBilinear(position.x * Instance.noiseScale, position.z * Instance.noiseScale);
     }
+
+    public static Vector3 Perturb(Vector3 position)
+    {
+        Vector4 sample = HexMetrics.SampleNoise(position);
+        position.x += (sample.x * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
+        //position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
+        position.z += (sample.z * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
+        return position;
+    }
 }
