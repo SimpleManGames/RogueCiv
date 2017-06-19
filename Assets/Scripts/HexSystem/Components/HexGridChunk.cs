@@ -7,7 +7,7 @@ public class HexGridChunk : MonoBehaviour
         get; private set;
     }
 
-    public HexMesh terrain;
+    public HexMesh terrain, rivers;
 
     public void Refresh()
     {
@@ -27,11 +27,13 @@ public class HexGridChunk : MonoBehaviour
     public void Triangulate()
     {
         terrain.Clear();
+        rivers.Clear();
 
         for (int i = 0; i < Hexes.Length; i++)
             Triangulate(Hexes[i]);
 
         terrain.Apply();
+        rivers.Apply();
     }
     /// <summary>
     /// Breaks down the main triangulate function into smaller more managable bits
