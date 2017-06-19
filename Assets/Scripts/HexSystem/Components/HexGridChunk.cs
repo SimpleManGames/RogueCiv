@@ -7,7 +7,7 @@ public class HexGridChunk : MonoBehaviour
         get; private set;
     }
 
-    public HexMesh terrain, rivers;
+    public HexMesh terrain, rivers, water, waterShore;
 
     public void Refresh()
     {
@@ -28,12 +28,16 @@ public class HexGridChunk : MonoBehaviour
     {
         terrain.Clear();
         rivers.Clear();
+        water.Clear();
+        waterShore.Clear();
 
         for (int i = 0; i < Hexes.Length; i++)
             Triangulate(Hexes[i]);
 
         terrain.Apply();
         rivers.Apply();
+        water.Apply();
+        waterShore.Apply();
     }
     /// <summary>
     /// Breaks down the main triangulate function into smaller more managable bits
@@ -73,6 +77,9 @@ public class HexGridChunk : MonoBehaviour
 
         if (direction <= HexDirection.SE)
             TriangulateConnection(direction, cell, e);
+
+        if (cell.IsUnderwater)
+            TriangulateWater(direction, cell, center);
     }
 
     private void TriangulateConnection(HexDirection direction, HexObject cell, EdgeVertices e1)
@@ -398,6 +405,73 @@ public class HexGridChunk : MonoBehaviour
             rivers.AddQuadUV(1f, 0f, 0.8f - v, 0.6f - v);
         else
             rivers.AddQuadUV(0f, 1f, v, v + 0.2f);
+    }
+
+    private void TriangulateWater(HexDirection direction, HexObject cell, Vector3 center)
+    {
+        center.y = cell.WaterSurfaceY;
+
+        HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction).cubeCoords);
+        if (neighbour != null && !neighbour.IsUnderwater)
+            TriangulateWaterShore(direction, cell, neighbour, center);
+        else
+            TriangulateOpenWater(direction, cell, neighbour, center);
+    }
+    private void TriangulateOpenWater(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
+    {
+        Vector3 c1 = center + HexMetrics.GetFirstSolidCorner(direction);
+        Vector3 c2 = center + HexMetrics.GetSecondSolidCorner(direction);
+
+        water.AddTriangle(center, c1, c2);
+
+        if (direction <= HexDirection.SE && neighbour != null)
+        {
+            Vector3 bridge = HexMetrics.GetBridge(direction);
+            Vector3 e1 = c1 + bridge;
+            Vector3 e2 = c2 + bridge;
+
+            water.AddQuad(c1, c2, e1, e2);
+
+            if (direction <= HexDirection.E)
+            {
+                HexObject nextNeighbor = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction.Next()).cubeCoords);
+                if (nextNeighbor == null || !nextNeighbor.IsUnderwater)
+                {
+                    return;
+                }
+                water.AddTriangle(
+                    c2, e2, c2 + HexMetrics.GetBridge(direction.Next())
+                );
+            }
+        }
+    }
+    private void TriangulateWaterShore(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
+    {
+        EdgeVertices e1 = new EdgeVertices(center + HexMetrics.GetFirstSolidCorner(direction), center + HexMetrics.GetSecondSolidCorner(direction));
+
+        water.AddTriangle(center, e1.v1, e1.v2);
+        water.AddTriangle(center, e1.v2, e1.v3);
+        water.AddTriangle(center, e1.v3, e1.v4);
+        water.AddTriangle(center, e1.v4, e1.v5);
+
+        Vector3 bridge = HexMetrics.GetBridge(direction);
+        EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
+
+        waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
+        waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
+        waterShore.AddQuad(e1.v3, e1.v4, e2.v3, e2.v4);
+        waterShore.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
+        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+        waterShore.AddQuadUV(0f, 0f, 0f, 1f);
+
+        HexObject nextNeighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction.Next()).cubeCoords);
+        if (nextNeighbour != null)
+        {
+            waterShore.AddTriangle(e1.v5, e2.v5, e1.v5 + HexMetrics.GetBridge(direction.Next()));
+            waterShore.AddTriangleUV(new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, nextNeighbour.IsUnderwater ? 0f : 1f));
+        }
     }
 
     void Awake()

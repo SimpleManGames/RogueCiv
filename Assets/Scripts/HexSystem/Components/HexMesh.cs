@@ -126,7 +126,7 @@ public class HexMesh : MonoBehaviour
         colors.AddRange(new Color[4] { c1, c2, c3, c4 });
     }
 
-    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector3 uv3)
+    public void AddTriangleUV(Vector2 uv1, Vector2 uv2, Vector2 uv3)
     {
         uvs.Add(uv1);
         uvs.Add(uv2);

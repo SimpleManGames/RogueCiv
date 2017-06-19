@@ -121,7 +121,40 @@ public class HexObject : MonoBehaviour
     {
         get
         {
-            return (Elevation + HexMetrics.Instance.riverSurfaceElevationOffset) * HexMetrics.Instance.elevationStep;
+            return (Elevation + HexMetrics.Instance.waterSurfaceElevationOffset) * HexMetrics.Instance.elevationStep;
+        }
+    }
+
+    public float WaterSurfaceY
+    {
+        get
+        {
+            return (waterLevel + HexMetrics.Instance.waterSurfaceElevationOffset) * HexMetrics.Instance.elevationStep;
+        }
+    }
+
+    private float waterLevel;
+    public float WaterLevel
+    {
+        get
+        {
+            return waterLevel;
+        }
+        set
+        {
+            if (waterLevel == value)
+                return;
+
+            waterLevel = value;
+            Refresh();
+        }
+    }
+
+    public bool IsUnderwater
+    {
+        get
+        {
+            return waterLevel > elevation;
         }
     }
 

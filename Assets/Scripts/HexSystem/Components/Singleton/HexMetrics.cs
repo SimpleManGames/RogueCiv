@@ -100,8 +100,8 @@ public class HexMetrics : Singleton<HexMetrics>
 
     [SerializeField]
     [Tooltip("The amount of the top of the river will be inset")]
-    private float _riverSurfaceElevationOffset = -0.5f;
-    public float riverSurfaceElevationOffset { get { return _riverSurfaceElevationOffset; } }
+    private float _waterSurfaceElevationOffset = -0.5f;
+    public float waterSurfaceElevationOffset { get { return _waterSurfaceElevationOffset; } }
 
     [SerializeField]
     [Tooltip("How many chunks are in the X direction")]
