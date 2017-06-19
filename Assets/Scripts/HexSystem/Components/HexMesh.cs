@@ -30,7 +30,7 @@ public class HexMesh : MonoBehaviour
     [NonSerialized]
     List<Color> colors = new List<Color>();
     [NonSerialized]
-    List<Vector2> uvs;
+    List<Vector2> uvs = new List<Vector2>();
 
     void Awake()
     {

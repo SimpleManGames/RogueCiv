@@ -74,6 +74,7 @@ public class HexGridChunk : MonoBehaviour
         if (direction <= HexDirection.SE)
             TriangulateConnection(direction, cell, e);
     }
+
     private void TriangulateConnection(HexDirection direction, HexObject cell, EdgeVertices e1)
     {
         HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction).cubeCoords);
@@ -89,7 +90,10 @@ public class HexGridChunk : MonoBehaviour
         );
 
         if (cell.HasRiverThroughEdge(direction))
+        {
             e2.v3.y = neighbour.StreamBedY;
+            TriangulateRiverQuad(e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbour.RiverSurfaceY, 0.8f, cell.HasIncomingRiver && cell.IncomingRiver == direction);
+        }
 
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
             TriangulateEdgeTerraces(e1, cell, e2, neighbour);
@@ -117,24 +121,7 @@ public class HexGridChunk : MonoBehaviour
                 TriangulateCorner(v5, next, e1.v5, cell, e2.v5, neighbour);
         }
     }
-    private void TriangulateEdgeTerraces(EdgeVertices begin, HexObject beginCell, EdgeVertices end, HexObject endCell)
-    {
-        EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
-        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
 
-        TriangulateEdgeStrip(begin, beginCell.Color, e2, c2);
-
-        for (int i = 2; i < HexMetrics.Instance.terraceSteps; i++)
-        {
-            EdgeVertices e1 = e2;
-            Color c1 = c2;
-            e2 = EdgeVertices.TerraceLerp(begin, end, i);
-            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
-            TriangulateEdgeStrip(e1, c1, e2, c2);
-        }
-
-        TriangulateEdgeStrip(e2, c2, end, endCell.Color);
-    }
     private void TriangulateCorner(Vector3 bottom, HexObject bottomCell, Vector3 left, HexObject leftCell, Vector3 right, HexObject rightCell)
     {
         HexEdgeType leftEdgeType = bottomCell.GetEdgeType(leftCell);
@@ -238,6 +225,7 @@ public class HexGridChunk : MonoBehaviour
             terrain.AddTriangleColor(leftCell.Color, rightCell.Color, boundaryColor);
         }
     }
+
     private void TriangulateBoundaryTriangle(Vector3 begin, HexObject beginCell, Vector3 left, HexObject leftCell, Vector3 boundary, Color boundaryColor)
     {
         Vector3 v2 = HexMetrics.Perturb(HexMetrics.TerraceLerp(begin, left, 1));
@@ -259,6 +247,7 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddTriangleUnperturbed(v2, HexMetrics.Perturb(left), boundary);
         terrain.AddTriangleColor(c2, leftCell.Color, boundaryColor);
     }
+
     private void TriangulateEdgeFan(Vector3 center, EdgeVertices edge, Color color)
     {
         terrain.AddTriangle(center, edge.v1, edge.v2);
@@ -281,6 +270,25 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddQuad(e1.v4, e1.v5, e2.v4, e2.v5);
         terrain.AddQuadColor(c1, c2);
     }
+    private void TriangulateEdgeTerraces(EdgeVertices begin, HexObject beginCell, EdgeVertices end, HexObject endCell)
+    {
+        EdgeVertices e2 = EdgeVertices.TerraceLerp(begin, end, 1);
+        Color c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, 1);
+
+        TriangulateEdgeStrip(begin, beginCell.Color, e2, c2);
+
+        for (int i = 2; i < HexMetrics.Instance.terraceSteps; i++)
+        {
+            EdgeVertices e1 = e2;
+            Color c1 = c2;
+            e2 = EdgeVertices.TerraceLerp(begin, end, i);
+            c2 = HexMetrics.TerraceLerp(beginCell.Color, endCell.Color, i);
+            TriangulateEdgeStrip(e1, c1, e2, c2);
+        }
+
+        TriangulateEdgeStrip(e2, c2, end, endCell.Color);
+    }
+
     private void TriangulateWithRiver(HexDirection direction, HexObject cell, Vector3 center, EdgeVertices e)
     {
         Vector3 centerL;
@@ -326,6 +334,11 @@ public class HexGridChunk : MonoBehaviour
         terrain.AddQuadColor(cell.Color);
         terrain.AddTriangle(centerR, m.v4, m.v5);
         terrain.AddTriangleColor(cell.Color);
+
+        bool reversed = cell.IncomingRiver == direction;
+
+        TriangulateRiverQuad(centerL, centerR, m.v2, m.v4, cell.RiverSurfaceY, 0.4f, reversed);
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
     }
     private void TriangulateWithRiverBeginOrEnd(HexDirection direction, HexObject cell, Vector3 center, EdgeVertices e)
     {
@@ -333,6 +346,20 @@ public class HexGridChunk : MonoBehaviour
         m.v3.y = e.v3.y;
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
         TriangulateEdgeFan(center, m, cell.Color);
+
+        bool reversed = cell.HasIncomingRiver;
+        TriangulateRiverQuad(m.v2, m.v4, e.v2, e.v4, cell.RiverSurfaceY, 0.6f, reversed);
+
+        center.y = m.v2.y = m.v4.y = cell.RiverSurfaceY;
+        rivers.AddTriangle(center, m.v2, m.v4);
+        if (reversed)
+        {
+            rivers.AddTriangleUV(new Vector2(0.5f, 0.4f), new Vector2(1f, 0.2f), new Vector2(0f, 0.2f));
+        }
+        else
+        {
+            rivers.AddTriangleUV(new Vector2(0.5f, 0.4f), new Vector2(0f, 0.6f), new Vector2(1f, 0.6f));
+        }
     }
     private void TriangulateAdjacentToRiver(HexDirection direction, HexObject cell, Vector3 center, EdgeVertices e)
     {
@@ -356,6 +383,21 @@ public class HexGridChunk : MonoBehaviour
 
         TriangulateEdgeStrip(m, cell.Color, e, cell.Color);
         TriangulateEdgeFan(center, m, cell.Color);
+    }
+    private void TriangulateRiverQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y, float v, bool reversed)
+    {
+        TriangulateRiverQuad(v1, v2, v3, v4, y, y, v, reversed);
+    }
+    private void TriangulateRiverQuad(Vector3 v1, Vector3 v2, Vector3 v3, Vector3 v4, float y1, float y2, float v, bool reversed)
+    {
+        v1.y = v2.y = y1;
+        v3.y = v4.y = y2;
+
+        rivers.AddQuad(v1, v2, v3, v4);
+        if (reversed)
+            rivers.AddQuadUV(1f, 0f, 0.8f - v, 0.6f - v);
+        else
+            rivers.AddQuadUV(0f, 1f, v, v + 0.2f);
     }
 
     void Awake()

@@ -117,6 +117,14 @@ public class HexObject : MonoBehaviour
         }
     }
 
+    public float RiverSurfaceY
+    {
+        get
+        {
+            return (Elevation + HexMetrics.Instance.riverSurfaceElevationOffset) * HexMetrics.Instance.elevationStep;
+        }
+    }
+
     private Canvas canvas;
     public Canvas Canvas
     {

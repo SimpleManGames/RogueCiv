@@ -62,7 +62,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 HexGrid.Instance.Hexes.ToList().ForEach(h =>
                 {
                     h.Text.color = Color.white;
-                    h.Text.text = h.Elevation.ToString();
+                    h.Text.text = h.Elevation.ToString("0.##");
                 });
                 break;
             case DebugType.River:

@@ -15,8 +15,8 @@ public class HexMetrics : Singleton<HexMetrics>
     /// </summary>
     [SerializeField]
     [Tooltip("Size of the circle that the corners of the hex will sit on")]
-    private float _outRadius = 1f;
-    public float outerRadius { get { return _outRadius; } }
+    private float _outerRadius = 1f;
+    public float outerRadius { get { return _outerRadius; } }
     public float outerToInner { get { return 0.866025404f; } }
     /// <summary>
     /// Radius that is the extents of the edges
@@ -40,7 +40,10 @@ public class HexMetrics : Singleton<HexMetrics>
     /// <summary>
     /// This defines how large the distance between the tops of the hexes are
     /// </summary>
-    public float elevationStep { get { return .5f * outerRadius; } }
+    [SerializeField]
+    [Tooltip("How high should each successive elevation step be")]
+    private float _elevationStep = 3f;
+    public float elevationStep { get { return _elevationStep; } }
 
     /// <summary>
     /// How many terraces will be made when the conditions to generate them happen
@@ -75,13 +78,6 @@ public class HexMetrics : Singleton<HexMetrics>
     private float _cellPerturbStrength = 2f;
     public float cellPerturbStrength { get { return _cellPerturbStrength; } }
     /// <summary>
-    /// How much the vertices are altered
-    /// </summary>
-    [SerializeField]
-    [Tooltip("The effect the perturb will have")]
-    private float _noiseScale = .003f;
-    public float noiseScale { get { return _noiseScale; } }
-    /// <summary>
     /// How shifted eached elevation level will be going up
     /// </summary>
     [SerializeField]
@@ -89,10 +85,23 @@ public class HexMetrics : Singleton<HexMetrics>
     private float _elevationPerturbStrength = 1.2f;
     public float elevationPerturbStrength { get { return _elevationPerturbStrength; } }
 
+    /// <summary>
+    /// How much the vertices are altered
+    /// </summary>
+    [SerializeField]
+    [Tooltip("The effect the perturb will have")]
+    private float _noiseScale = .003f;
+    public float noiseScale { get { return _noiseScale; } }
+
     [SerializeField]
     [Tooltip("How deep the rivers will be inset")]
     private float _streamBedElevationOffset = -1f;
     public float streamBedElevationOffset { get { return _streamBedElevationOffset; } }
+
+    [SerializeField]
+    [Tooltip("The amount of the top of the river will be inset")]
+    private float _riverSurfaceElevationOffset = -0.5f;
+    public float riverSurfaceElevationOffset { get { return _riverSurfaceElevationOffset; } }
 
     [SerializeField]
     [Tooltip("How many chunks are in the X direction")]
@@ -215,7 +224,6 @@ public class HexMetrics : Singleton<HexMetrics>
     {
         Vector4 sample = HexMetrics.SampleNoise(position);
         position.x += (sample.x * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
-        //position.y += (sample.y * 2f - 1f) * HexMetrics.cellPerturbStrength;
         position.z += (sample.z * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
         return position;
     }
