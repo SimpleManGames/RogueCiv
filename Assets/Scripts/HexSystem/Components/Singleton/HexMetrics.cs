@@ -43,6 +43,8 @@ public class HexMetrics : Singleton<HexMetrics>
     private float _waterFactor = 0.6f;
     public float waterFactor { get { return _waterFactor; } }
 
+    public float waterBlendFactor { get { return 1f - waterFactor; } }
+
     /// <summary>
     /// This defines how large the distance between the tops of the hexes are
     /// </summary>
@@ -188,6 +190,11 @@ public class HexMetrics : Singleton<HexMetrics>
     public static Vector3 GetBridge(HexDirection direction)
     {
         return (Instance.corners[(int)direction] + Instance.corners[(int)direction + 1]) * Instance.blendFactor;
+    }
+
+    public static Vector3 GetWaterBridge(HexDirection direction)
+    {
+        return (Instance.corners[(int)direction] + Instance.corners[(int)direction + 1]) * Instance.waterBlendFactor;
     }
 
     /// <summary>
