@@ -469,7 +469,7 @@ public class HexGridChunk : MonoBehaviour
             Vector3 v3 = nextNeighbor.Position + (nextNeighbor.IsUnderwater ? HexMetrics.GetFirstWaterCorner(direction.Previous()) : HexMetrics.GetFirstSolidCorner(direction.Previous()));
             v3.y = center1.y;
             waterShore.AddTriangle(
-                e1.v5, e2.v5, v3)
+                e1.v5, e2.v5, v3
             );
             waterShore.AddTriangleUV(
                 new Vector2(0f, 0f),
