@@ -66,10 +66,7 @@ public class HexObject : MonoBehaviour
             position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.Instance.elevationPerturbStrength;
             transform.localPosition = position;
 
-            if (HasOutgoingRiver && elevation < HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)OutgoingRiver).cubeCoords).elevation)
-                RemoveOutgoingRiver();
-            if (HasIncomingRiver && elevation > HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)IncomingRiver).cubeCoords).elevation)
-                RemoveIncomingRiver();
+            ValidateRivers();
 
             Refresh();
         }
@@ -146,6 +143,7 @@ public class HexObject : MonoBehaviour
                 return;
 
             waterLevel = value;
+            ValidateRivers();
             Refresh();
         }
     }
@@ -208,7 +206,7 @@ public class HexObject : MonoBehaviour
         if (HasOutgoingRiver && OutgoingRiver == direction) return;
 
         HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)direction).cubeCoords);
-        if (!neighbour || Elevation < neighbour.Elevation)
+        if (!IsValidRiverDestination(neighbour))
             return;
 
         RemoveOutgoingRiver();
@@ -223,6 +221,19 @@ public class HexObject : MonoBehaviour
         neighbour.hasIncomingRiver = true;
         neighbour.incomingRiver = direction.Opposite();
         neighbour.RefreshSelfOnly();
+    }
+
+    private bool IsValidRiverDestination(HexObject neighbour)
+    {
+        return neighbour && (Elevation >= neighbour.Elevation || waterLevel == neighbour.Elevation);
+    }
+
+    private void ValidateRivers()
+    {
+        if (hasOutgoingRiver && !IsValidRiverDestination(HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)outgoingRiver).cubeCoords)))
+            RemoveOutgoingRiver();
+        if (hasIncomingRiver && !HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)outgoingRiver).cubeCoords).IsValidRiverDestination(this))
+            RemoveIncomingRiver();
     }
 
     public void RemoveRiver()
