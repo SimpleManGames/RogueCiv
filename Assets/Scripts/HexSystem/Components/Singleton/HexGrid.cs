@@ -144,7 +144,7 @@ public class HexGrid : Singleton<HexGrid>
         hexObject.transform.localPosition = position;
         hexObject.name += " " + hexObject.Hex.cubeCoords.ToString();
         hexObject.Elevation = MapGenerator.Instance.heightMap[x, z];
-        hexObject.WaterLevel = (hexObject.Elevation <= 0) ? .1f : 0f;
+        hexObject.WaterLevel = (hexObject.Elevation <= 0.4f) ? .1f : 0f;
 
         AddHexToChunk(x, z, hexObject);
     }

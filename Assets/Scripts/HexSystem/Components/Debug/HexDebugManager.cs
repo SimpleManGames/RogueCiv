@@ -10,7 +10,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
         None, Index, CubeCoord, Height, River,
         Water, WaterLevel
     }
-    private DebugType debugType;
+    private DebugType debugType = DebugType.None;
 
     private Text layerDebugText;
 
@@ -99,6 +99,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
     {
         layerDebugText = GameObject.Find("Debug Text").GetComponent<Text>();
         layerDebugText.text = "";
+        UpdateValues();
     }
 
     private void Update()
