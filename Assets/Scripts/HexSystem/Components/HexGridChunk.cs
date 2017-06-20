@@ -441,17 +441,18 @@ public class HexGridChunk : MonoBehaviour
             }
         }
     }
-    private void TriangulateWaterShore(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
+    private void TriangulateWaterShore(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center1)
     {
-        EdgeVertices e1 = new EdgeVertices(center + HexMetrics.GetFirstWaterCorner(direction), center + HexMetrics.GetSecondWaterCorner(direction));
+        EdgeVertices e1 = new EdgeVertices(center1 + HexMetrics.GetFirstWaterCorner(direction), center1 + HexMetrics.GetSecondWaterCorner(direction));
 
-        water.AddTriangle(center, e1.v1, e1.v2);
-        water.AddTriangle(center, e1.v2, e1.v3);
-        water.AddTriangle(center, e1.v3, e1.v4);
-        water.AddTriangle(center, e1.v4, e1.v5);
+        water.AddTriangle(center1, e1.v1, e1.v2);
+        water.AddTriangle(center1, e1.v2, e1.v3);
+        water.AddTriangle(center1, e1.v3, e1.v4);
+        water.AddTriangle(center1, e1.v4, e1.v5);
 
-        Vector3 bridge = HexMetrics.GetWaterBridge(direction);
-        EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
+        Vector3 center2 = neighbour.Position;
+        center2.y = center1.y;
+        EdgeVertices e2 = new EdgeVertices(center2 + HexMetrics.GetSecondSolidCorner(direction.Opposite()), center2 + HexMetrics.GetFirstSolidCorner(direction.Opposite()));
 
         waterShore.AddQuad(e1.v1, e1.v2, e2.v1, e2.v2);
         waterShore.AddQuad(e1.v2, e1.v3, e2.v2, e2.v3);
@@ -465,8 +466,10 @@ public class HexGridChunk : MonoBehaviour
         HexObject nextNeighbor = HexGrid.Instance.FindHexObject(Hex.Neighbour(cell.Hex, (byte)direction.Next()).cubeCoords);
         if (nextNeighbor != null)
         {
+            Vector3 v3 = nextNeighbor.Position + (nextNeighbor.IsUnderwater ? HexMetrics.GetFirstWaterCorner(direction.Previous()) : HexMetrics.GetFirstSolidCorner(direction.Previous()));
+            v3.y = center1.y;
             waterShore.AddTriangle(
-                e1.v5, e2.v5, e1.v5 + HexMetrics.GetWaterBridge(direction.Next())
+                e1.v5, e2.v5, v3)
             );
             waterShore.AddTriangleUV(
                 new Vector2(0f, 0f),
