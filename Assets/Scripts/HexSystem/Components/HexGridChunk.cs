@@ -407,7 +407,7 @@ public class HexGridChunk : MonoBehaviour
             rivers.AddQuadUV(0f, 1f, v, v + 0.2f);
     }
 
-    void TriangulateWater(HexDirection direction, HexObject cell, Vector3 center)
+    private void TriangulateWater(HexDirection direction, HexObject cell, Vector3 center)
     {
         center.y = cell.WaterSurfaceY;
 
@@ -417,10 +417,10 @@ public class HexGridChunk : MonoBehaviour
         else
             TriangulateOpenWater(direction, cell, neighbour, center);
     }
-    void TriangulateOpenWater(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
+    private void TriangulateOpenWater(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
     {
-        Vector3 c1 = center + HexMetrics.GetFirstSolidCorner(direction);
-        Vector3 c2 = center + HexMetrics.GetSecondSolidCorner(direction);
+        Vector3 c1 = center + HexMetrics.GetFirstWaterCorner(direction);
+        Vector3 c2 = center + HexMetrics.GetSecondWaterCorner(direction);
 
         water.AddTriangle(center, c1, c2);
 
@@ -441,9 +441,9 @@ public class HexGridChunk : MonoBehaviour
             }
         }
     }
-    void TriangulateWaterShore(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
+    private void TriangulateWaterShore(HexDirection direction, HexObject cell, HexObject neighbour, Vector3 center)
     {
-        EdgeVertices e1 = new EdgeVertices(center + HexMetrics.GetFirstSolidCorner(direction), center + HexMetrics.GetSecondSolidCorner(direction));
+        EdgeVertices e1 = new EdgeVertices(center + HexMetrics.GetFirstWaterCorner(direction), center + HexMetrics.GetSecondWaterCorner(direction));
 
         water.AddTriangle(center, e1.v1, e1.v2);
         water.AddTriangle(center, e1.v2, e1.v3);

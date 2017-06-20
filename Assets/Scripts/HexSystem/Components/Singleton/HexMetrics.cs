@@ -37,6 +37,12 @@ public class HexMetrics : Singleton<HexMetrics>
     /// </summary>
     public float blendFactor { get { return 1f - solidFactor; } }
 
+    [SerializeField]
+    [Range(0, 1)]
+    [Tooltip("How much of a water hex will be as the center mesh")]
+    private float _waterFactor = 0.6f;
+    public float waterFactor { get { return _waterFactor; } }
+
     /// <summary>
     /// This defines how large the distance between the tops of the hexes are
     /// </summary>
@@ -164,6 +170,16 @@ public class HexMetrics : Singleton<HexMetrics>
     public static Vector3 GetSolidEdgeMiddle(HexDirection direction)
     {
         return (Instance.corners[(int)direction] + Instance.corners[(int)direction + 1]) * (0.5f * Instance.solidFactor);
+    }
+
+    public static Vector3 GetFirstWaterCorner(HexDirection direction)
+    {
+        return Instance.corners[(int)direction] * Instance.waterFactor;
+    }
+
+    public static Vector3 GetSecondWaterCorner(HexDirection direction)
+    {
+        return Instance.corners[(int)direction + 1] * Instance.waterFactor;
     }
 
     /// <summary>
