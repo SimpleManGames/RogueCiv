@@ -98,6 +98,9 @@ public class HexGrid : Singleton<HexGrid>
                 if (currentHex.Elevation == 0)
                     break;
 
+                if (currentHex == nextLowestNeighbour)
+                    continue;
+
                 currentHex.SetOutgoingRiver(Hex.Direction(currentHex.Hex, nextLowestNeighbour.Hex));
                 if (nextLowestNeighbour == null)
                     break;

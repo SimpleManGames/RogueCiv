@@ -43,12 +43,12 @@ public class HexDebugManager : Singleton<HexDebugManager>
         {
             default:
             case DebugType.None:
-                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Canvas.enabled = false);
+                HexGrid.Instance.Hexes.ToList().ForEach(h => h.Text.gameObject.SetActive(false));
                 break;
             case DebugType.Index:
                 HexGrid.Instance.Hexes.ToList().ForEach(h =>
                 {
-                    h.Canvas.enabled = true;
+                    h.Text.gameObject.SetActive(true);
                     h.Text.color = Color.white;
                     h.Text.text = h.Index.ToString();
                 });

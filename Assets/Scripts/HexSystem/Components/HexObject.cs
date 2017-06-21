@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 [Serializable]
 public class HexObject : MonoBehaviour
@@ -156,21 +155,12 @@ public class HexObject : MonoBehaviour
         }
     }
 
-    private Canvas canvas;
-    public Canvas Canvas
+    private TextMesh text;
+    public TextMesh Text
     {
         get
         {
-            return canvas == null ? canvas = GetComponentInChildren<Canvas>() : canvas;
-        }
-    }
-
-    private Text text;
-    public Text Text
-    {
-        get
-        {
-            return text == null ? text = Canvas.GetComponentInChildren<Text>() : text;
+            return text == null ? text = transform.GetComponentInChildren<TextMesh>() : text;
         }
     }
 

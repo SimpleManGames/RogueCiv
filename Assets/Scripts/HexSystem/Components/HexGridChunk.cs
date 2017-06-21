@@ -54,7 +54,7 @@ public class HexGridChunk : MonoBehaviour
         Vector3 center = cell.Position;
         EdgeVertices e = new EdgeVertices(center + HexMetrics.GetFirstSolidCorner(direction), center + HexMetrics.GetSecondSolidCorner(direction));
 
-        if (cell.HasRiver)
+        if (cell.HasRiver && !cell.IsUnderwater)
         {
             if (cell.HasRiverThroughEdge(direction))
             {
@@ -72,10 +72,10 @@ public class HexGridChunk : MonoBehaviour
         else
             TriangulateEdgeFan(center, e, cell.Color);
 
-        Vector3 canvasPosition = HexMetrics.Perturb(center);
-        canvasPosition.y += 0.1f;
+        Vector3 textPosition = HexMetrics.Perturb(center);
+        textPosition.y += 0.1f;
 
-        cell.Canvas.GetComponent<RectTransform>().position = canvasPosition;
+        cell.Text.transform.position = textPosition;
 
         if (direction <= HexDirection.SE)
             TriangulateConnection(direction, cell, e);
@@ -93,20 +93,21 @@ public class HexGridChunk : MonoBehaviour
 
         Vector3 bridge = HexMetrics.GetBridge(direction);
         bridge.y = neighbour.Position.y - cell.Position.y;
-        EdgeVertices e2 = new EdgeVertices(
-            e1.v1 + bridge,
-            e1.v5 + bridge
-        );
+        EdgeVertices e2 = new EdgeVertices(e1.v1 + bridge, e1.v5 + bridge);
 
         if (cell.HasRiverThroughEdge(direction))
         {
-            e2.v3.y = neighbour.StreamBedY;
             if (!cell.IsUnderwater)
             {
+                e2.v3.y = neighbour.StreamBedY;
                 if (!neighbour.IsUnderwater)
+                {
                     TriangulateRiverQuad(e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbour.RiverSurfaceY, 0.8f, cell.HasIncomingRiver && cell.IncomingRiver == direction);
+                }
                 else if (cell.Elevation > neighbour.WaterLevel)
+                {
                     TriangulateWaterfallInWater(e1.v2, e1.v4, e2.v2, e2.v4, cell.RiverSurfaceY, neighbour.RiverSurfaceY, neighbour.WaterSurfaceY);
+                }
             }
             else if (!neighbour.IsUnderwater && neighbour.Elevation > cell.WaterLevel)
             {
@@ -115,7 +116,9 @@ public class HexGridChunk : MonoBehaviour
         }
 
         if (cell.GetEdgeType(direction) == HexEdgeType.Slope)
+        {
             TriangulateEdgeTerraces(e1, cell, e2, neighbour);
+        }
         else
         {
             TriangulateEdgeStrip(e1, cell.Color, e2, neighbour.Color);
