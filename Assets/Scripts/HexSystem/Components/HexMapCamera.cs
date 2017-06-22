@@ -3,11 +3,14 @@ using UnityEngine;
 
 public class HexMapCamera : MonoBehaviour
 {
+    private Vector3 _point;
+    public Vector3 Point { get { return _point; } }
+
     Transform swivel { get { return transform.GetChild(0); } }
     Transform stick { get { return swivel.GetChild(0); } }
 
     private Camera _camera;
-    private Camera Camera
+    public Camera Camera
     {
         get
         {
@@ -140,6 +143,7 @@ public class HexMapCamera : MonoBehaviour
         if (Physics.Linecast(groundLinecastStartPosition, groundLinecastEndPosition, out groundHit))
         {
             DebugExtension.DebugPoint(groundHit.point);
+            _point = groundHit.point;
             float difference = Mathf.Abs(transform.position.y - groundHit.point.y);
             transform.position = Vector3.Slerp(transform.position, groundHit.point, cameraElevationSpeed * difference * Time.deltaTime);
         }

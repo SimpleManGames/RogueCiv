@@ -60,7 +60,7 @@ public struct CubeCoord
     /// <param name="s">Z value in a Cube Coordinate system</param>
     public CubeCoord(double q, double r, double s)
     {
-        Debug.Assert(q + r + s == 0, "The values must add up to zero for the cube coordinate system to work");
+        Debug.Assert(q + r + s == 0, "The values must add up to zero for the cube coordinate system to work/nValues are Q: " + q + " R: " + r + " S: " + s);
         this.q = q;
         this.r = r;
         this.s = s;
@@ -173,6 +173,26 @@ public struct CubeCoord
     }
 
     #endregion
+
+    public static CubeCoord CubeRound(CubeCoord cube)
+    {
+        var rx = Mathf.Round((float)cube.Q);
+        var ry = Mathf.Round((float)cube.R);
+        var rz = Mathf.Round((float)cube.S);
+
+        var x_diff = Mathf.Abs(rx - (float)cube.Q);
+        var y_diff = Mathf.Abs(ry - (float)cube.R);
+        var z_diff = Mathf.Abs(rz - (float)cube.S);
+
+        if (x_diff > y_diff && x_diff > z_diff)
+            rx = -ry - rz;
+        else if (y_diff > z_diff)
+            ry = -rx - rz;
+        else
+            rz = -rx - ry;
+
+        return new CubeCoord(rx, ry, rz);
+    }
 
     #region Operator
 
