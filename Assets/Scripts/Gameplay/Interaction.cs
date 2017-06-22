@@ -36,7 +36,7 @@ public class Interaction : MonoBehaviour
 
         int iX = Mathf.RoundToInt(x);
         int iY = Mathf.RoundToInt(y);
-        int iZ = Mathf.RoundToInt(-x - y);
+        int iZ = Mathf.RoundToInt(-iX - iY);
 
         if (iX + iY + iZ != 0)
         {
