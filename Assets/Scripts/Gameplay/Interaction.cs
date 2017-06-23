@@ -3,6 +3,7 @@
 public class Interaction : MonoBehaviour
 {
     public HexMapCamera cameraRig;
+    public GameObject marker;
 
     void Update()
     {
@@ -11,6 +12,8 @@ public class Interaction : MonoBehaviour
         {
             HandleInput();
         }
+
+        marker.transform.position = cameraRig.Point + (Vector3.up * 1f);
     }
 
     private void HandleInput()
