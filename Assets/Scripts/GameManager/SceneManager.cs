@@ -7,6 +7,17 @@ public class SceneManager : Singleton<SceneManager>
     [Tooltip("List of scenes that will be loaded when starting this scene")]
     public List<string> scenesToLoadAdditivily = new List<string>();
 
+    private Player _playerRef;
+    public Player PlayerRef
+    {
+        get {
+            if (_playerRef == null)
+                _playerRef = FindObjectOfType<Player>();
+
+            return _playerRef;
+        }
+    }
+
     new private void Awake()
     {
         base.Awake();

@@ -93,7 +93,7 @@ public struct Hex
         for (int i = 0; i < Directions.Count; i++)
             if (Directions[i] == (to - from))
                 return (HexDirection)i;
-
+        Debug.Log("Incorrect direction " + (to - from).ToString());
         return (HexDirection)(-1);
     }
 
@@ -140,6 +140,38 @@ public struct Hex
     }
 
     #endregion
+
+    public static CubeCoord FromPosition(Vector3 position)
+    {
+        float x = position.x / (HexMetrics.Instance.innerRadius * 2f);
+        float y = -x;
+
+        float offset = -position.z / (HexMetrics.Instance.outerRadius * 3f);
+        x -= offset;
+        y -= offset;
+
+        int iX = Mathf.RoundToInt(x);
+        int iY = Mathf.RoundToInt(y);
+        int iZ = Mathf.RoundToInt(-iX - iY);
+
+        if (iX + iY + iZ != 0)
+        {
+            float dX = Mathf.Abs(x - iX);
+            float dY = Mathf.Abs(y - iY);
+            float dZ = Mathf.Abs(-x - y - iZ);
+
+            if (dX > dY && dX > dZ)
+            {
+                iX = -iY - iZ;
+            }
+            else if (dZ > dY)
+            {
+                iZ = -iX - iY;
+            }
+        }
+
+        return new CubeCoord(iX, iY, iZ);
+    }
 
     #region Operators
 

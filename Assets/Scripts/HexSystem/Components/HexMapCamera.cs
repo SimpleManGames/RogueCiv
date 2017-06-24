@@ -46,7 +46,6 @@ public class HexMapCamera : MonoBehaviour
     private float rotationSpeed;
 
     [SerializeField]
-    [Tooltip("That good ass slerp")]
     private float cameraElevationSpeed;
 
     [SerializeField]

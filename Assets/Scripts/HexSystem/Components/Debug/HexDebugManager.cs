@@ -8,7 +8,8 @@ public class HexDebugManager : Singleton<HexDebugManager>
     private enum DebugType
     {
         None, Index, CubeCoord, Height, River,
-        Water, WaterLevel
+        Water, WaterLevel,
+        Walkable
     }
     private DebugType debugType = DebugType.None;
 
@@ -85,6 +86,13 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 {
                     h.Text.color = Color.blue;
                     h.Text.text = h.WaterLevel.ToString();
+                });
+                break;
+            case DebugType.Walkable:
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Text.color = Color.white;
+                    h.Text.text = NavigationField.Instance.NavField[NavigationField.LayerType.Walkable][h.Index].ToString();
                 });
                 break;
         }

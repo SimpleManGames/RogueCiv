@@ -64,11 +64,11 @@ Shader "Projector/Light" {
 			{
 				// in case of NPOT, escape the render to avoid clamping artifacts
 				fixed4 res = fixed4(0,0,0,0);
-				if(!(i.uvShadow.x <= 1. && i.uvShadow.x >= 0 && i.uvShadow.y <= 1. && i.uvShadow.y >= 0))
-					return res;
+				//if(!(i.uvShadow.x <= 1. && i.uvShadow.x >= 0 && i.uvShadow.y <= 1. && i.uvShadow.y >= 0))
+				//	return res;
 
 				fixed4 texS = tex2Dproj(_ShadowTex, UNITY_PROJ_COORD(i.uvShadow));
-				texS.rgb = float4(triplanar(i.pos, i.uvShadow, i.normal), 1) * _Color.rgb;
+				texS.rgb *= _Color.rgb;
 				texS.a = 1.0 - texS.a;
 
 				fixed4 texF = tex2Dproj(_FalloffTex, UNITY_PROJ_COORD(i.uvFalloff));

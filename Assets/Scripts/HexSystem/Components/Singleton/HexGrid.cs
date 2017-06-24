@@ -148,6 +148,7 @@ public class HexGrid : Singleton<HexGrid>
         hexObject.name += " " + hexObject.Hex.cubeCoords.ToString();
         hexObject.Elevation = MapGenerator.Instance.heightMap[x, z];
         hexObject.WaterLevel = (hexObject.Elevation <= 0.4f) ? .1f : 0f;
+        NavigationField.Instance.NavField[NavigationField.LayerType.Walkable][i] = NavigationField.Instance.walkableCurve.Evaluate(MapGenerator.Instance.heightMap[x, z] / MapGenerator.Instance.mapSettings.heightMultiplier);
 
         AddHexToChunk(x, z, hexObject);
     }
