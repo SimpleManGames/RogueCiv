@@ -60,7 +60,7 @@ public struct CubeCoord
     /// <param name="s">Z value in a Cube Coordinate system</param>
     public CubeCoord(double q, double r, double s)
     {
-        Debug.Assert(q + r + s == 0, "The values must add up to zero for the cube coordinate system to work/nValues are Q: " + q + " R: " + r + " S: " + s);
+        Debug.Assert(q + r + s == 0, "The values must add up to zero for the cube coordinate system to work\nValues are Q: " + q + " R: " + r + " S: " + s);
         this.q = q;
         this.r = r;
         this.s = s;

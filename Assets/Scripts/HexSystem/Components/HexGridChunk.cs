@@ -9,6 +9,8 @@ public class HexGridChunk : MonoBehaviour
 
     public HexMesh terrain, rivers, water, waterShore, estuaries;
 
+    public HexFeatureManager features;
+
     public void Refresh()
     {
         enabled = true;
@@ -32,6 +34,8 @@ public class HexGridChunk : MonoBehaviour
         waterShore.Clear();
         estuaries.Clear();
 
+        features.Clear();
+
         for (int i = 0; i < Hexes.Length; i++)
             Triangulate(Hexes[i]);
 
@@ -40,6 +44,8 @@ public class HexGridChunk : MonoBehaviour
         water.Apply();
         waterShore.Apply();
         estuaries.Apply();
+
+        features.Apply();
     }
     /// <summary>
     /// Breaks down the main triangulate function into smaller more managable bits
@@ -48,6 +54,9 @@ public class HexGridChunk : MonoBehaviour
     {
         for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             Triangulate(d, cell);
+
+        if (!cell.IsUnderwater && !cell.HasRiver) // TODO: Add Road check
+            features.AddFeature(cell.Position);
     }
     private void Triangulate(HexDirection direction, HexObject cell)
     {
