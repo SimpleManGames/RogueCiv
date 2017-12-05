@@ -4,40 +4,41 @@ using UnityEngine;
 [Serializable]
 public class HexObject : MonoBehaviour
 {
-    private Hex hex;
+    private Hex _hex;
     public Hex Hex
     {
-        get { return hex; }
-        set { hex = value; }
+        get { return _hex; }
+        set { _hex = value; }
     }
 
-    private HexGridChunk chunk;
+    private HexGridChunk _chunk;
     public HexGridChunk Chunk
     {
-        get { return chunk; }
-        set { chunk = value; }
+        get { return _chunk; }
+        set { _chunk = value; }
     }
 
-    private int index;
+    [SerializeField]
+    private int _index;
     public int Index
     {
-        get { return index; }
-        set { index = value; }
+        get { return _index; }
+        set { _index = value; }
     }
 
-    private Color color;
+    private Color _color;
     public Color Color
     {
         get
         {
-            return color;
+            return _color;
         }
         set
         {
-            if (color == value)
+            if (_color == value)
                 return;
 
-            color = value;
+            _color = value;
             Refresh();
         }
     }
@@ -50,16 +51,19 @@ public class HexObject : MonoBehaviour
         }
     }
 
-    private float elevation;
+    [SerializeField]
+    private HexObject[] _neighbours;
+
+    private float _elevation;
     public float Elevation
     {
-        get { return elevation; }
+        get { return _elevation; }
         set
         {
-            if (elevation == value)
+            if (_elevation == value)
                 return;
 
-            elevation = value;
+            _elevation = value;
             Vector3 position = transform.localPosition;
             position.y = value * HexMetrics.Instance.elevationStep;
             position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.Instance.elevationPerturbStrength;
@@ -67,32 +71,36 @@ public class HexObject : MonoBehaviour
 
             ValidateRivers();
 
+            for (int i = 0; i < roads.Length; i++)
+                if (roads[i] && GetElevationDifference((HexDirection)i) > 1)
+                    SetRoad(i, false);
+
             Refresh();
         }
     }
 
-    private bool hasIncomingRiver;
+    private bool _hasIncomingRiver;
     public bool HasIncomingRiver
     {
-        get { return hasIncomingRiver; }
+        get { return _hasIncomingRiver; }
     }
 
-    private bool hasOutgoingRiver;
+    private bool _hasOutgoingRiver;
     public bool HasOutgoingRiver
     {
-        get { return hasOutgoingRiver; }
+        get { return _hasOutgoingRiver; }
     }
 
-    private HexDirection incomingRiver;
+    private HexDirection _incomingRiver;
     public HexDirection IncomingRiver
     {
-        get { return incomingRiver; }
+        get { return _incomingRiver; }
     }
 
-    private HexDirection outgoingRiver;
+    private HexDirection _outgoingRiver;
     public HexDirection OutgoingRiver
     {
-        get { return outgoingRiver; }
+        get { return _outgoingRiver; }
     }
 
     public bool HasRiver
@@ -151,7 +159,21 @@ public class HexObject : MonoBehaviour
     {
         get
         {
-            return waterLevel > elevation;
+            return waterLevel > _elevation;
+        }
+    }
+
+    [SerializeField]
+    private bool[] roads;
+
+    public bool HasRoads
+    {
+        get
+        {
+            for (int i = 0; i < roads.Length; i++)
+                if (roads[i]) return true;
+
+            return false;
         }
     }
 
@@ -183,8 +205,25 @@ public class HexObject : MonoBehaviour
 
     private void RefreshSelfOnly()
     {
-        chunk.Refresh();
+        _chunk.Refresh();
     }
+
+    #region Neighbour Functions
+
+    public HexObject GetNeighbour(HexDirection direction)
+    {
+        return _neighbours[(int)direction];
+    }
+
+    public void SetNeighbour(HexDirection direction, HexObject hex)
+    {
+        _neighbours[(int)direction] = hex;
+        hex._neighbours[(int)direction.Opposite()] = this;
+    }
+
+    #endregion
+
+    #region River Function
 
     public bool HasRiverThroughEdge(HexDirection direction)
     {
@@ -195,7 +234,7 @@ public class HexObject : MonoBehaviour
     {
         if (HasOutgoingRiver && OutgoingRiver == direction) return;
 
-        HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)direction).cubeCoords);
+        HexObject neighbour = GetNeighbour(direction);
         if (!IsValidRiverDestination(neighbour))
             return;
 
@@ -203,14 +242,14 @@ public class HexObject : MonoBehaviour
         if (HasIncomingRiver && IncomingRiver == direction)
             RemoveIncomingRiver();
 
-        hasOutgoingRiver = true;
-        outgoingRiver = direction;
-        RefreshSelfOnly();
+        _hasOutgoingRiver = true;
+        _outgoingRiver = direction;
 
         neighbour.RemoveIncomingRiver();
-        neighbour.hasIncomingRiver = true;
-        neighbour.incomingRiver = direction.Opposite();
-        neighbour.RefreshSelfOnly();
+        neighbour._hasIncomingRiver = true;
+        neighbour._incomingRiver = direction.Opposite();
+
+        SetRoad((int)direction, false);
     }
 
     private bool IsValidRiverDestination(HexObject neighbour)
@@ -220,9 +259,9 @@ public class HexObject : MonoBehaviour
 
     private void ValidateRivers()
     {
-        if (hasOutgoingRiver && !IsValidRiverDestination(HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)outgoingRiver).cubeCoords)))
+        if (_hasOutgoingRiver && !IsValidRiverDestination(GetNeighbour(_outgoingRiver)))
             RemoveOutgoingRiver();
-        if (hasIncomingRiver && !HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)outgoingRiver).cubeCoords).IsValidRiverDestination(this))
+        if (_hasIncomingRiver && !GetNeighbour(_outgoingRiver).IsValidRiverDestination(this))
             RemoveIncomingRiver();
     }
 
@@ -237,11 +276,11 @@ public class HexObject : MonoBehaviour
         if (!HasIncomingRiver)
             return;
 
-        hasIncomingRiver = false;
+        _hasIncomingRiver = false;
         RefreshSelfOnly();
 
-        HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)IncomingRiver).cubeCoords);
-        neighbour.hasOutgoingRiver = false;
+        HexObject neighbour = GetNeighbour(IncomingRiver);
+        neighbour._hasOutgoingRiver = false;
         neighbour.RefreshSelfOnly();
     }
 
@@ -250,21 +289,61 @@ public class HexObject : MonoBehaviour
         if (!HasOutgoingRiver)
             return;
 
-        hasOutgoingRiver = false;
+        _hasOutgoingRiver = false;
         RefreshSelfOnly();
 
-        HexObject neighbour = HexGrid.Instance.FindHexObject(Hex.Neighbour(this.Hex, (byte)OutgoingRiver).cubeCoords);
-        neighbour.hasIncomingRiver = false;
+        HexObject neighbour = GetNeighbour(OutgoingRiver);
+        neighbour._hasIncomingRiver = false;
         neighbour.RefreshSelfOnly();
     }
 
+    #endregion
+
+    #region Road Functions
+
+    public bool HasRoadThroughEdge(HexDirection direction)
+    {
+        return roads[(int)direction];
+    }
+
+    public void AddRoad(HexDirection direction)
+    {
+        if (!roads[(int)direction] && !HasRiverThroughEdge(direction) && GetElevationDifference(direction) <= 1)
+            SetRoad((int)direction, true);
+    }
+
+    public void RemoveRoads()
+    {
+        var neighbours = HexGrid.Instance.FindHexObjects(Hex.Neighbours(_hex));
+        for (int i = 0; i < neighbours.Length; i++)
+            if (roads[i])
+                SetRoad(i, false);
+    }
+
+    void SetRoad(int index, bool state)
+    {
+        var neighbours = HexGrid.Instance.FindHexObjects(Hex.Neighbours(_hex));
+        roads[index] = state;
+        neighbours[index].roads[(int)((HexDirection)index).Opposite()] = state;
+        neighbours[index].RefreshSelfOnly();
+        RefreshSelfOnly();
+    }
+
+    #endregion
+
     public HexEdgeType GetEdgeType(HexDirection direction)
     {
-        return HexMetrics.GetEdgeType(elevation, HexGrid.Instance.FindHexObject(Hex.Neighbour(hex, (byte)direction).cubeCoords).Elevation);
+        return HexMetrics.GetEdgeType(_elevation, GetNeighbour(direction).Elevation);
     }
 
     public HexEdgeType GetEdgeType(HexObject other)
     {
         return HexMetrics.GetEdgeType(Elevation, other.Elevation);
+    }
+
+    public float GetElevationDifference(HexDirection direction)
+    {
+        float difference = _elevation - GetNeighbour(direction)._elevation;
+        return difference >= 0 ? difference : -difference;
     }
 }

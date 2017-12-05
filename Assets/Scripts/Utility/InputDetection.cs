@@ -8,7 +8,7 @@ public static class InputDetection
     public static float Vertical { get { return Input.GetAxisRaw("Vertical"); } }
 
     public static bool interactDown;
-    public static bool Interact(InputAction action)
+    public static bool InteractButton(InputAction action)
     {
         if (Input.GetAxisRaw("Interact") != 0f)
         {
@@ -25,5 +25,13 @@ public static class InputDetection
         return interactDown;
     }
 
-    public static bool Any { get { return Horizontal != 0 || Vertical != 0 || Interact(() => { }); } }
+    public static void InteractHold(InputAction action)
+    {
+        if (Input.GetAxisRaw("Interact") != 0f)
+        {
+            action.Invoke();
+        }
+    }
+
+    public static bool Any { get { return Horizontal != 0 || Vertical != 0 || InteractButton(() => { }); } }
 }

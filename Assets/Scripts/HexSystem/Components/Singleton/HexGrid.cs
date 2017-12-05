@@ -10,7 +10,7 @@ public class HexGrid : Singleton<HexGrid>
 
     #region Properties
 
-    public HashSet<HexObject> Hexes
+    public HexObject[] Hexes
     {
         get; private set;
     }
@@ -29,13 +29,11 @@ public class HexGrid : Singleton<HexGrid>
         get { return GlobalMapSettings.Instance.ChunkCountZ; }
     }
 
-    private int width;
     public int Width
     {
         get { return GlobalMapSettings.Instance.Width; }
     }
 
-    private int height;
     public int Height
     {
         get { return GlobalMapSettings.Instance.Height; }
@@ -125,6 +123,7 @@ public class HexGrid : Singleton<HexGrid>
 
     private void CreateCells()
     {
+        Hexes = new HexObject[Width * Height];
         for (int z = 0, i = 0; z < Height; z++)
         {
             for (int x = 0; x < Width; x++)
@@ -140,7 +139,7 @@ public class HexGrid : Singleton<HexGrid>
     private void CreateCell(int x, int z, int i)
     {
         Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMetrics.Instance.innerRadius * 2f), 0f, -(z * (HexMetrics.Instance.outerRadius * 1.5f)));
-        HexObject hexObject = Hexes.Add<HexObject>(Instantiate(hexPrefab));
+        HexObject hexObject = Hexes[i] = Instantiate(hexPrefab);
         hexObject.Index = i;
         hexObject.Hex = new Hex(CubeCoord.OddRowToCube(new OffsetCoord(x, z)));
         hexObject.Color = MapGenerator.Instance.colorMap[i];
@@ -150,7 +149,43 @@ public class HexGrid : Singleton<HexGrid>
         hexObject.WaterLevel = (hexObject.Elevation <= 0.4f) ? .1f : 0f;
         NavigationField.Instance.NavField[NavigationField.LayerType.Walkable][i] = NavigationField.Instance.walkableCurve.Evaluate(MapGenerator.Instance.heightMap[x, z] / MapGenerator.Instance.mapSettings.heightMultiplier);
 
+        if (x > 0)
+        {
+            hexObject.SetNeighbour(HexDirection.W, Hexes[i - 1]);
+        }
+        if (z > 0)
+        {
+            if ((z & 1) == 0)
+            {
+                hexObject.SetNeighbour(HexDirection.NE, Hexes[i - Width]);
+                if (x > 0)
+                {
+                    hexObject.SetNeighbour(HexDirection.NW, Hexes[i - Width - 1]);
+                }
+            }
+            else
+            {
+                hexObject.SetNeighbour(HexDirection.NW, Hexes[i - Width]);
+                if (x < Width - 1)
+                {
+                    hexObject.SetNeighbour(HexDirection.NE, Hexes[i - Width + 1]);
+                }
+            }
+        }
+
         AddHexToChunk(x, z, hexObject);
+    }
+
+    public CubeCoord GetCubeCoordAt(Vector3 position)
+    {
+        position = transform.InverseTransformPoint(position);
+        return Hex.FromPosition(position);
+    }
+
+    public HexObject GetHexObjectAt(Vector3 position)
+    {
+        var coord = GetCubeCoordAt(position);
+        return Hexes.ElementAt((int)(coord.X + coord.Z * Width));
     }
 
     private void AddHexToChunk(int x, int z, HexObject hex)
@@ -169,7 +204,6 @@ public class HexGrid : Singleton<HexGrid>
         base.Awake();
         HexMetrics.noiseSource = noiseSource;
 
-        Hexes = new HashSet<HexObject>();
         CreateChunks();
         CreateCells();
         CreateRivers(MapGenerator.Instance.mapSettings);

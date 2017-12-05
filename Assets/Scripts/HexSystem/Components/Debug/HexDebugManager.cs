@@ -9,7 +9,7 @@ public class HexDebugManager : Singleton<HexDebugManager>
     {
         None, Index, CubeCoord, Height, River,
         Water, WaterLevel,
-        Walkable
+        Walkable, Road
     }
     private DebugType debugType = DebugType.None;
 
@@ -93,6 +93,13 @@ public class HexDebugManager : Singleton<HexDebugManager>
                 {
                     h.Text.color = Color.white;
                     h.Text.text = NavigationField.Instance.NavField[NavigationField.LayerType.Walkable][h.Index].ToString();
+                });
+                break;
+            case DebugType.Road:
+                HexGrid.Instance.Hexes.ToList().ForEach(h =>
+                {
+                    h.Text.color = Color.white;
+                    h.Text.text = (h.HasRoads) ? "Road" : "";
                 });
                 break;
         }

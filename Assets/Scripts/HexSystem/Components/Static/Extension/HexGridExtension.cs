@@ -37,6 +37,11 @@ public static class HexGridExtension
         return Instance.FindHexObject(new CubeCoord(q, r, s)) ?? null;
     }
 
+    public static HexObject FindHexObject(this HexGrid Instance, Hex hex)
+    {
+        return Instance.Hexes.Where(h => h.Hex == hex).FirstOrDefault();
+    }
+
     public static HexObject[] FindHexObjects(this HexGrid Instance, Hex[] hexes)
     {
         HexObject[] retVal = new HexObject[hexes.Length];
