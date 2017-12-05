@@ -177,6 +177,11 @@ public class HexObject : MonoBehaviour
         }
     }
 
+    public HexDirection RiverBeginOrEndDirection
+    {
+        get { return HasIncomingRiver ? IncomingRiver : OutgoingRiver; }
+    }
+
     private TextMesh text;
     public TextMesh Text
     {
@@ -296,7 +301,7 @@ public class HexObject : MonoBehaviour
         neighbour._hasIncomingRiver = false;
         neighbour.RefreshSelfOnly();
     }
-
+    
     #endregion
 
     #region Road Functions
