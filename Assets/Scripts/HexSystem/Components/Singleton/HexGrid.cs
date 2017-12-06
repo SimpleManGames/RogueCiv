@@ -138,6 +138,10 @@ public class HexGrid : Singleton<HexGrid>
     /// </summary>
     private void CreateCell(int x, int z, int i)
     {
+        /////////////////////////////////
+        /// Create Cell and populate data
+        /////////////////////////////////
+
         Vector3 position = new Vector3(((x + z * 0.5f - z / 2) * HexMetrics.Instance.innerRadius * 2f), 0f, -(z * (HexMetrics.Instance.outerRadius * 1.5f)));
         HexObject hexObject = Hexes[i] = Instantiate(hexPrefab);
         hexObject.Index = i;
@@ -147,7 +151,25 @@ public class HexGrid : Singleton<HexGrid>
         hexObject.name += " " + hexObject.Hex.cubeCoords.ToString();
         hexObject.Elevation = MapGenerator.Instance.heightMap[x, z];
         hexObject.WaterLevel = (hexObject.Elevation <= 0.4f) ? .1f : 0f;
-        NavigationField.Instance.NavField[NavigationField.LayerType.Walkable][i] = NavigationField.Instance.walkableCurve.Evaluate(MapGenerator.Instance.heightMap[x, z] / MapGenerator.Instance.mapSettings.heightMultiplier);
+
+        ///////////////////////////////////////////////////////
+        /// Set a starting plant level for hex's that are green
+        ///////////////////////////////////////////////////////
+
+        if (hexObject.Color == MapGenerator.Instance.regions.Where(r => r.name == "Grass").FirstOrDefault().color ||
+            hexObject.Color == MapGenerator.Instance.regions.Where(r => r.name == "Grass 2").FirstOrDefault().color)
+        {
+            Random.State currentState = Random.state;
+            Random.InitState(MapGenerator.Instance.mapSettings.noiseSetting.seed);
+
+            hexObject.PlantLevel = Random.Range(0, 3);
+
+            Random.state = currentState;
+        }
+
+        /////////////////////
+        /// Set up Neighbours
+        /////////////////////
 
         if (x > 0)
         {

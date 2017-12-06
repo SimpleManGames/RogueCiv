@@ -80,8 +80,7 @@ public class HexObject : MonoBehaviour
         }
     }
 
-    [SerializeField]
-    [Range(0, 3)]
+    [SerializeField, Range(0, 3)]
     private int _urbanLevel;
     public int UrbanLevel
     {
@@ -92,6 +91,36 @@ public class HexObject : MonoBehaviour
                 return;
 
             _urbanLevel = value;
+            RefreshSelfOnly();
+        }
+    }
+
+    [SerializeField, Range(0, 3)]
+    private int _farmLevel;
+    public int FarmLevel
+    {
+        get { return _farmLevel; }
+        set
+        {
+            if (_farmLevel == value)
+                return;
+
+            _farmLevel = value;
+            RefreshSelfOnly();
+        }
+    }
+
+    [SerializeField, Range(0, 3)]
+    private int _plantLevel;
+    public int PlantLevel
+    {
+        get { return _plantLevel; }
+        set
+        {
+            if (_plantLevel == value)
+                return;
+
+            _plantLevel = value;
             RefreshSelfOnly();
         }
     }
@@ -227,7 +256,8 @@ public class HexObject : MonoBehaviour
 
     private void RefreshSelfOnly()
     {
-        _chunk.Refresh();
+        if (_chunk)
+            _chunk.Refresh();
     }
 
     #region Neighbour Functions
