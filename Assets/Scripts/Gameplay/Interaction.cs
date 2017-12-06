@@ -12,10 +12,7 @@ public class Interaction : MonoBehaviour
     public ActionMode currentActionMode;
 
     public HexMapCamera cameraRig;
-    public GameObject marker;
-
-    public Player playerObject;
-
+    
     public bool buttonDown;
 
     [SerializeField]
@@ -27,13 +24,11 @@ public class Interaction : MonoBehaviour
     {
         DebugExtension.DebugPoint(cameraRig.Point, Color.red);
         InputDetection.InteractHold(() => { HandleHoldInput(); });
-
-        marker.transform.position = cameraRig.Point + (Vector3.up * 10f);
     }
 
     private void HandleHoldInput()
     {
-        Ray inputRay = cameraRig.Camera.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0));
+        Ray inputRay = cameraRig.Camera.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
@@ -62,12 +57,12 @@ public class Interaction : MonoBehaviour
                 return;
             }
         }
+
         isDragging = false;
     }
 
     private void UpdateHex(HexObject hex)
     {
-        Debug.Log("UpdateHex Func");
         if (hex)
         {
             if (isDragging)

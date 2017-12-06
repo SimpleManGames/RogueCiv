@@ -54,6 +54,7 @@ public class HexObject : MonoBehaviour
     [SerializeField]
     private HexObject[] _neighbours;
 
+    //[SerializeField]
     private float _elevation;
     public float Elevation
     {
@@ -76,6 +77,22 @@ public class HexObject : MonoBehaviour
                     SetRoad(i, false);
 
             Refresh();
+        }
+    }
+
+    [SerializeField]
+    [Range(0, 3)]
+    private int _urbanLevel;
+    public int UrbanLevel
+    {
+        get { return _urbanLevel; }
+        set
+        {
+            if (_urbanLevel == value)
+                return;
+
+            _urbanLevel = value;
+            RefreshSelfOnly();
         }
     }
 
@@ -196,10 +213,10 @@ public class HexObject : MonoBehaviour
         if (Chunk)
         {
             Chunk.Refresh();
-            HexObject[] neighbors = HexGrid.Instance.FindHexObjects(Hex.Neighbours(Hex));
-            for (int i = 0; i < neighbors.Length; i++)
+            //HexObject[] neighbors = HexGrid.Instance.FindHexObjects(Hex.Neighbours(Hex));
+            for (int i = 0; i < _neighbours.Length; i++)
             {
-                HexObject neighbor = neighbors[i];
+                HexObject neighbor = _neighbours[i];
                 if (neighbor != null && neighbor.Chunk != Chunk)
                 {
                     neighbor.Chunk.Refresh();
@@ -301,7 +318,7 @@ public class HexObject : MonoBehaviour
         neighbour._hasIncomingRiver = false;
         neighbour.RefreshSelfOnly();
     }
-    
+
     #endregion
 
     #region Road Functions
@@ -350,5 +367,10 @@ public class HexObject : MonoBehaviour
     {
         float difference = _elevation - GetNeighbour(direction)._elevation;
         return difference >= 0 ? difference : -difference;
+    }
+
+    private void OnValidate()
+    {
+        Refresh();
     }
 }

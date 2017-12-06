@@ -2,7 +2,7 @@
 
 public class HexFeatureManager : MonoBehaviour
 {
-    public Transform featurePrefab;
+    public HexFeatureCollection[] urbanCollections;
 
     private Transform container;
 
@@ -20,11 +20,34 @@ public class HexFeatureManager : MonoBehaviour
 
     }
 
-    public void AddFeature(Vector3 position)
+    public void AddFeature(HexObject hex, Vector3 position)
     {
-        Transform instance = Instantiate(featurePrefab);
+        HexHash hash = HexMetrics.SampleHashGrid(position);
+
+        Transform prefab = PickPrefab(hex.UrbanLevel, hash.a, hash.b);
+        if (!prefab)
+            return;
+
+        Transform instance = Instantiate(prefab);
         position.y += instance.localScale.y * 0.5f;
         instance.localPosition = HexMetrics.Perturb(position);
+        instance.localRotation = Quaternion.Euler(0f, 360f * hash.c, 0f);
         instance.SetParent(container, false);
+    }
+
+    private Transform PickPrefab(int level, float hash, float choice)
+    {
+        if (level > 0)
+        {
+            float[] thresholds = HexMetrics.Instance.GetFeatureThresholds(level - 1);
+            for (int i = 0; i < thresholds.Length; i++)
+            {
+                if (hash < thresholds[i])
+                {
+                    return urbanCollections[i].Pick(choice);
+                }
+            }
+        }
+        return null;
     }
 }

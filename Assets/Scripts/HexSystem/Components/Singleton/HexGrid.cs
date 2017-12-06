@@ -203,6 +203,7 @@ public class HexGrid : Singleton<HexGrid>
     {
         base.Awake();
         HexMetrics.noiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(MapGenerator.Instance.mapSettings.noiseSetting.seed);
 
         CreateChunks();
         CreateCells();

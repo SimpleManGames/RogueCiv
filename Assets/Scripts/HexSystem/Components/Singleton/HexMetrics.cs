@@ -108,7 +108,7 @@ public class HexMetrics : Singleton<HexMetrics>
 
     [SerializeField]
     [Tooltip("The amount of the top of the river will be inset")]
-    private float _waterSurfaceElevationOffset = -0.5f;
+    private float _waterSurfaceElevationOffset = -2f;
     public float waterSurfaceElevationOffset { get { return _waterSurfaceElevationOffset; } }
 
     [SerializeField]
@@ -119,6 +119,23 @@ public class HexMetrics : Singleton<HexMetrics>
     [Tooltip("How many chunks are in the Z direction")]
     private int _chunkSizeY = 5;
     public int chunkSizeZ { get { return _chunkSizeY; } }
+
+    [SerializeField]
+    [Tooltip("The size of the array which will hold random values")]
+    private int _hashGridSize = 256;
+    private HexHash[] _hashGrid;
+
+    [SerializeField]
+    [Tooltip("The rate that the hash grid is scaled down by")]
+    private float _hashGridScale = 0.25f;
+
+    [SerializeField]
+    private float[][] _featureThresholds =
+    {
+        new float[] {0.0f, 0.0f, 0.4f},
+        new float[] {0.0f, 0.4f, 0.6f},
+        new float[] {0.4f, 0.6f, 0.8f}
+    };
 
     /// <summary>
     /// Pre-defined corners of the hexes
@@ -249,5 +266,36 @@ public class HexMetrics : Singleton<HexMetrics>
         position.x += (sample.x * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
         position.z += (sample.z * 2f - 1f) * HexMetrics.Instance.cellPerturbStrength;
         return position;
+    }
+
+    public static void InitializeHashGrid(int seed)
+    {
+        Instance._hashGrid = new HexHash[Instance._hashGridSize * Instance._hashGridSize];
+
+        Random.State currentState = Random.state;
+        Random.InitState(seed);
+
+        for (int i = 0; i < Instance._hashGrid.Length; i++)
+        {
+            Instance._hashGrid[i] = HexHash.Create();
+        }
+
+        Random.state = currentState;
+    }
+
+    public static HexHash SampleHashGrid(Vector3 position)
+    {
+        int x = (int)(position.x * Instance._hashGridScale) % Instance._hashGridSize;
+        if (x < 0) x += Instance._hashGridSize;
+
+        int z = (int)(position.z * Instance._hashGridScale) % Instance._hashGridSize;
+        if (z < 0) z += Instance._hashGridSize;
+
+        return Instance._hashGrid[x + z * Instance._hashGridSize];
+    }
+
+    public float[] GetFeatureThresholds(int level)
+    {
+        return Instance._featureThresholds[level];
     }
 }
